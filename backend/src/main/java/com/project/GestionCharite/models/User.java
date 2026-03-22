@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import com.project.GestionCharite.models.enums.*;;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

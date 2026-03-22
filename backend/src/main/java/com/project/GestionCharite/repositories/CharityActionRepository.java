@@ -14,5 +14,5 @@ public interface CharityActionRepository extends JpaRepository<CharityAction, Lo
   List<CharityAction> findByCategory(ActionCategory category);
   List<CharityAction> findByOrganizationId(Long organizationId);
   // Find actions where the target amount hasn't been reached yet
-  List<CharityAction> findByCurrentAmountLessThanTargetAmount();
+  // List<CharityAction> findByCurrentAmountLessThanTargetAmount();
 }

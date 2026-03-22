@@ -1,0 +1,67 @@
+# ==========================================
+# 1. DEFAULT CONFIGURATION (Always Active)
+# ==========================================
+spring:
+  profiles:
+    active: prod # Change this to 'prod' when you want to use Supabase
+
+jwt:
+  # Replace this with a strong 256-bit secure key in production
+  secret: df442e1694c68fb5a281c4e0ffe003787955a1e396f72e0c086d122948103464 
+  expiration: 86400000 # 1 day in milliseconds
+
+---
+# ==========================================
+# 2. DEVELOPMENT PROFILE (H2 Database)
+# ==========================================
+spring:
+  config:
+    activate:
+      on-profile: dev
+      
+  datasource:
+    url: jdbc:h2:mem:charitydb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+    
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+---
+# ==========================================
+# 3. PRODUCTION PROFILE (Supabase PostgreSQL)
+# ==========================================
+spring:
+  config:
+    activate:
+      on-profile: prod
+      
+  datasource:
+    # Replace the bracketed values with your Supabase credentials
+    # the db.mouadabbasid.com need to be changed to localhost or 127.0.0.1 or the docker gateaway ip if hosted !
+    url: jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres
+    username: postgres.mhjkjbdtoagmezccmeco
+    password: Nyckboy123@
+    driver-class-name: org.postgresql.Driver
+    
+    # url: jdbc:postgresql://db.mouadabbassid.com:5432/postgres
+    # username: postgres
+    # password: 2b781f5569a36ce4b871353185c483bf
+    # driver-class-name: org.postgresql.Driver
+    
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update # Automatically creates/updates your tables
+    show-sql: false # Turned off for production to keep logs clean
