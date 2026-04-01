@@ -38,6 +38,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
                 .requestMatchers("/api/v1/auth/**").permitAll() // Login and Registration
+                .requestMatchers("/error").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/actions/**").permitAll() // Anyone can view charity actions
                 .requestMatchers(HttpMethod.GET, "/api/v1/organizations/**").permitAll() // Anyone can view organizations
                 
