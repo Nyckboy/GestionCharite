@@ -44,7 +44,7 @@ public class SecurityConfig {
                 
                 // Role-specific endpoints
                 .requestMatchers("/api/v1/admin/**").hasRole("SUPER_ADMIN") // Validation des organisations
-                .requestMatchers(HttpMethod.POST, "/api/v1/actions/**").hasAnyRole("ORG_ADMIN", "SUPER_ADMIN") // Création d'actions
+                .requestMatchers(HttpMethod.POST, "/api/v1/actions").hasAnyRole("ORG_ADMIN", "SUPER_ADMIN") // Création d'actions
                 
                 // Everything else requires authentication
                 .anyRequest().authenticated()
