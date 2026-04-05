@@ -46,6 +46,32 @@ public class OrganizationService {
                 .collect(Collectors.toList());
     }
 
+    // --------------------------------------------------------
+    // SUPER-ADMIN METHODS
+    // --------------------------------------------------------
+
+    public List<OrgResponse> getPendingOrganizations() {
+        // Fetches all organizations where isValidated is false
+        return organizationRepository.findByIsValidatedFalse()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public OrgResponse validateOrganization(Long id) {
+        // Find the organization by ID
+        Organization org = organizationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+
+        // Flip the switch
+        org.setValidated(true); 
+        
+        // Save back to the database
+        Organization updatedOrg = organizationRepository.save(org);
+        
+        return mapToResponse(updatedOrg);
+    }
+
     private OrgResponse mapToResponse(Organization org) {
         return OrgResponse.builder()
                 .id(org.getId())
