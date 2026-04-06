@@ -1,10 +1,14 @@
 package com.project.GestionCharite.services;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.GestionCharite.dto.CharityDTOs.DonationRequest;
-import com.project.GestionCharite.dto.CharityDTOs.DonationResponse;
+import com.project.GestionCharite.dto.DonationDTOs.DonationRequest;
+import com.project.GestionCharite.dto.DonationDTOs.DonationResponse;
 import com.project.GestionCharite.models.CharityAction;
 import com.project.GestionCharite.models.Donation;
 import com.project.GestionCharite.models.User;
@@ -19,38 +23,50 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DonationService {
 
-  private final DonationRepository donationRepository;
-  private final CharityActionRepository actionRepository;
-  private final UserRepository userRepository;
+    private final DonationRepository donationRepository;
+    private final CharityActionRepository actionRepository;
+    private final UserRepository userRepository;
 
-  @Transactional
-  public DonationResponse processDonation(DonationRequest request, Long donorId) {
-      User donor = userRepository.findById(donorId)
-              .orElseThrow(() -> new RuntimeException("User not found"));
+    @Transactional
+    public DonationResponse makeDonation(DonationRequest request, String donorEmail) {
+        // 1. Find the User making the donation
+        User donor = userRepository.findByEmail(donorEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-      CharityAction action = actionRepository.findById(request.getActionId())
-              .orElseThrow(() -> new RuntimeException("Charity Action not found"));
+        // 2. Find the Charity Action they are donating to
+        CharityAction action = actionRepository.findById(request.getActionId())
+                .orElseThrow(() -> new RuntimeException("Charity Action not found"));
 
-      // 1. Create the Donation record
-      Donation donation = Donation.builder()
-              .amount(request.getAmount())
-              .donor(donor)
-              .action(action)
-              .status(DonationStatus.COMPLETED) // Assuming success for now; we'd update this when integrating Stripe 
-              .build();
+        // 3. Build and save the Donation
+        Donation donation = Donation.builder()
+                .amount(request.getAmount())
+                .donationDate(LocalDateTime.now())
+                .donor(donor)
+                .action(action)
+                .status(DonationStatus.COMPLETED) 
+                .build();
 
-      Donation savedDonation = donationRepository.save(donation);
+        Donation savedDonation = donationRepository.save(donation);
 
-      // 2. Update the Charity Action's current progress 
-      action.setCurrentAmount(action.getCurrentAmount().add(request.getAmount()));
-      actionRepository.save(action);
+        return mapToResponse(savedDonation);
+    }
 
-      return DonationResponse.builder()
-              .id(savedDonation.getId())
-              .amount(savedDonation.getAmount())
-              .actionTitle(action.getTitle())
-              .status(savedDonation.getStatus())
-              .donationDate(savedDonation.getDonationDate())
-              .build();
-  }
+    public List<DonationResponse> getDonationsForAction(Long actionId) {
+        return donationRepository.findByActionId(actionId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private DonationResponse mapToResponse(Donation donation) {
+        return DonationResponse.builder()
+                .id(donation.getId())
+                .amount(donation.getAmount())
+                .actionTitle(donation.getAction().getTitle())
+                .donorName(donation.getDonor().getFirstName() + " " + donation.getDonor().getLastName())
+                .status(donation.getStatus())
+                .donationDate(donation.getDonationDate()) 
+                .message("Thank you for your generous donation!")
+                .build();
+    }
 }
