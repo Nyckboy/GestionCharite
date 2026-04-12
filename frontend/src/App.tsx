@@ -1,18 +1,28 @@
+// src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-// import Login from './pages/auth/Login';
+
+// Quick placeholder components so the router has something to render
+const Login = () => <div className="p-10 text-2xl font-bold text-center">Login Page Placeholder</div>;
+const Register = () => <div className="p-10 text-2xl font-bold text-center">Register Page Placeholder</div>;
+const PublicFeed = () => <div className="p-10 text-2xl font-bold text-center">Public Charity Feed</div>;
+const SuperAdminDash = () => <div className="p-10 text-2xl font-bold text-center">Admin: Pending Approvals</div>;
+const OrgDash = () => <div className="p-10 text-2xl font-bold text-center">Org: Dashboard</div>;
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Public / Auth Routes */}
+        {/* Public & Auth Routes */}
         <Route path="/login" element={<Login />} />
-        
-        {/* We will add Register here next */}
-        {/* <Route path="/register" element={<Register />} /> */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<PublicFeed />} />
 
-        {/* Default redirect to login for now */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Protected Routes (We will add role-guards to these later) */}
+        <Route path="/admin" element={<SuperAdminDash />} />
+        <Route path="/organization" element={<OrgDash />} />
+
+        {/* Catch-all redirect */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
