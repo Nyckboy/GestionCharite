@@ -8,12 +8,18 @@ export const apiClient = axios.create({
   },
 });
 
-// We will add the JWT interceptor here in Phase 4!
-
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  if (token) {
+  
+  // Check if the request URL is for login or register
+  const isAuthRoute = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
+
+  // Only attach the token if we have one AND we are not trying to log in/register
+  if (token && !isAuthRoute) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  
   return config;
-  });
+}, (error) => {
+  return Promise.reject(error);
+});

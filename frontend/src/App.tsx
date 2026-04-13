@@ -1,9 +1,9 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 
 // Quick placeholder components so the router has something to render
-const Login = () => <div className="p-10 text-2xl font-bold text-center">Login Page Placeholder</div>;
-const Register = () => <div className="p-10 text-2xl font-bold text-center">Register Page Placeholder</div>;
 const PublicFeed = () => <div className="p-10 text-2xl font-bold text-center">Public Charity Feed</div>;
 const SuperAdminDash = () => <div className="p-10 text-2xl font-bold text-center">Admin: Pending Approvals</div>;
 const OrgDash = () => <div className="p-10 text-2xl font-bold text-center">Org: Dashboard</div>;
