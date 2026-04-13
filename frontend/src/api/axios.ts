@@ -9,3 +9,11 @@ export const apiClient = axios.create({
 });
 
 // We will add the JWT interceptor here in Phase 4!
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+  });
