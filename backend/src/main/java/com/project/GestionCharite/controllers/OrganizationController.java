@@ -31,6 +31,15 @@ public class OrganizationController {
                 .body(organizationService.createOrganization(request, managerEmail));
     }
 
+    // 🔒 SECURE: Logged-in managers can fetch their own organizations
+    @GetMapping("/my-orgs")
+    public ResponseEntity<List<OrgResponse>> getMyOrganizations(Authentication authentication) {
+        // Extract the email directly from the secure token
+        String managerEmail = authentication.getName();
+        
+        return ResponseEntity.ok(organizationService.getMyOrganizations(managerEmail));
+    }
+
     // 🌍 PUBLIC: Anyone can view the list of validated organizations
     @GetMapping
     public ResponseEntity<List<OrgResponse>> getValidatedOrganizations() {

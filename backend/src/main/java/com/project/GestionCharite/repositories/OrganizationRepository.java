@@ -20,4 +20,6 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
 
   List<Organization> findByManagerId(Long managerId);
 
+  List<Organization> findByManagerEmail(String email);
+
 }

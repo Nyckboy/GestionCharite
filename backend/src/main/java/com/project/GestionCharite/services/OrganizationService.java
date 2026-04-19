@@ -46,6 +46,13 @@ public class OrganizationService {
                 .collect(Collectors.toList());
     }
 
+    public List<OrgResponse> getMyOrganizations(String managerEmail) {
+        return organizationRepository.findByManagerEmail(managerEmail)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     // --------------------------------------------------------
     // SUPER-ADMIN METHODS
     // --------------------------------------------------------

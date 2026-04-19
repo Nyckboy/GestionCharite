@@ -1,5 +1,7 @@
 package com.project.GestionCharite.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +29,7 @@ public class OrganizationDTOs {
         private Long id;
         private String name;
         private String primaryContact;
+        @JsonProperty("isValidated")
         private boolean isValidated;
         private String managerName;
         private String taxIdentificationNumber;

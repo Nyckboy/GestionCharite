@@ -37,7 +37,9 @@ const OrgDash = () => {
     setIsLoadingList(true);
     try {
       // Assuming your GET /organizations returns a list. 
-      const response = await apiClient.get<Organization[]>('/organizations');
+      const response = await apiClient.get<Organization[]>('/organizations/my-orgs');
+      console.log(response.data);
+      
       setOrganizations(response.data);
     } catch (error) {
       console.error("Failed to fetch organizations", error);
