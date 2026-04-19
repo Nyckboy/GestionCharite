@@ -4,10 +4,10 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import OrgDash from './pages/org/OrgDash';
 import ProtectedRoute from './components/ProtectedRoute';
+import SuperAdminDash from './pages/admin/SuperAdminDash';
 
 // Quick placeholder components so the router has something to render
 const PublicFeed = () => <div className="p-10 text-2xl font-bold text-center">Public Charity Feed</div>;
-const SuperAdminDash = () => <div className="p-10 text-2xl font-bold text-center">Admin: Pending Approvals</div>;
 
 function App() {
   return (
