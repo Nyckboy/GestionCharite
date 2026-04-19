@@ -79,6 +79,7 @@ public class OrganizationService {
                 .primaryContact(org.getPrimaryContact())
                 .isValidated(org.isValidated())
                 .managerName(org.getManager().getFirstName() + " " + org.getManager().getLastName())
+                .taxIdentificationNumber(org.getTaxIdentificationNumber())
                 .build();
     }
 }

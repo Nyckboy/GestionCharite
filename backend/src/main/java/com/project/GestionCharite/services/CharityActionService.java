@@ -23,12 +23,17 @@ public class CharityActionService {
   private final OrganizationRepository organizationRepository;
 
   @Transactional
-  public ActionResponse createAction(ActionRequest request) {
+  public ActionResponse createAction(ActionRequest request, String loggedInUserEmail) {
     Organization org = organizationRepository.findById(request.getOrganizationId()).orElseThrow(() -> new RuntimeException("Organization not found"));
 
     // Business Rule: Only validated organizations can create actions
     if (!org.isValidated()) {
       throw new IllegalStateException("Organization must be validated by a super-admin to create actions.");
+    }
+
+    // THE OWNERSHIP CHECK: Are you actually the manager of this org?
+    if (!org.getManager().getEmail().equals(loggedInUserEmail)) {
+        throw new RuntimeException("Stop right there! You do not own this organization.");
     }
 
     CharityAction action = CharityAction.builder()

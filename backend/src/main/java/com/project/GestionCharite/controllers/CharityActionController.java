@@ -7,6 +7,7 @@ import com.project.GestionCharite.services.CharityActionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +21,11 @@ public class CharityActionController {
 
     // 🔒 SECURE: Requires a valid JWT token and an ORG_ADMIN or SUPER_ADMIN role
     @PostMapping
-    public ResponseEntity<ActionResponse> createAction(@RequestBody ActionRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(actionService.createAction(request));
+    public ResponseEntity<ActionResponse> createAction(@RequestBody ActionRequest request, Authentication authentication) {
+
+        String loggedInUserEmail = authentication.getName();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(actionService.createAction(request, loggedInUserEmail));
     }
 
     // 🌍 PUBLIC: Anyone can view actions, no token required

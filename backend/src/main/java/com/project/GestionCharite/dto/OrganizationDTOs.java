@@ -29,5 +29,6 @@ public class OrganizationDTOs {
         private String primaryContact;
         private boolean isValidated;
         private String managerName;
+        private String taxIdentificationNumber;
     }
 }

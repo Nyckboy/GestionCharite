@@ -4,7 +4,12 @@
 spring:
   profiles:
     active: prod # Change this to 'prod' when you want to use Supabase
-
+  thymeleaf:
+    cache: false            # Set to true in real production, false for development
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
 jwt:
   # Replace this with a strong 256-bit secure key in production
   secret: df442e1694c68fb5a281c4e0ffe003787955a1e396f72e0c086d122948103464 
