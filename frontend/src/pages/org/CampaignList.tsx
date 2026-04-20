@@ -10,22 +10,24 @@ const CampaignList = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchCampaigns();
+    const fetchCampaigns = async () => {
+      setIsLoading(true);
+      try {
+        // Assuming your Spring Boot backend has or will have this endpoint
+        const response = await apiClient.get<CharityAction[]>(`/actions/organization/${id}`);
+        setCampaigns(response.data);
+      } catch (err: any) {
+        console.error("Failed to fetch campaigns", err);
+        setError("Could not load campaigns. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (id) {
+      fetchCampaigns();
+    }
   }, [id]);
 
-  const fetchCampaigns = async () => {
-    setIsLoading(true);
-    try {
-      // Assuming your Spring Boot backend has or will have this endpoint
-      const response = await apiClient.get<CharityAction[]>(`/actions/organization/${id}`);
-      setCampaigns(response.data);
-    } catch (err: any) {
-      console.error("Failed to fetch campaigns", err);
-      setError("Could not load campaigns. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="fade-in">
