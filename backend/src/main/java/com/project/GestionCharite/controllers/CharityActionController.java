@@ -33,4 +33,10 @@ public class CharityActionController {
     public ResponseEntity<List<ActionResponse>> getActionsByCategory(@PathVariable ActionCategory category) {
         return ResponseEntity.ok(actionService.getActionsByCategory(category));
     }
+
+    // 🌍 PUBLIC: Anyone can view the actions of a specific organization
+    @GetMapping("/organization/{id}")
+    public ResponseEntity<List<ActionResponse>> getActionsByOrganization(@PathVariable Long id) {
+        return ResponseEntity.ok(actionService.getActionsByOrganization(id));
+    }
 }

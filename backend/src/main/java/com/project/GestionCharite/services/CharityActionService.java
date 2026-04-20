@@ -50,11 +50,20 @@ public class CharityActionService {
     CharityAction savedAction = actionRepository.save(action);
     return mapToResponse(savedAction);
   }
+  
   public List<ActionResponse> getActionsByCategory(ActionCategory category) {
     return actionRepository.findByCategory(category).stream()
             .map(this::mapToResponse)
             .collect(Collectors.toList());
   }
+
+  // 🌍 PUBLIC METHOD: Fetch all actions for a specific organization
+    public List<ActionResponse> getActionsByOrganization(Long organizationId) {
+        return actionRepository.findByOrganizationId(organizationId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
 
   private ActionResponse mapToResponse(CharityAction action) {
     return ActionResponse.builder()
