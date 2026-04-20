@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import OrgDash from './pages/org/OrgDash';
+// import OrgDash from './pages/org/OrgDash';
 import ProtectedRoute from './components/ProtectedRoute';
 import SuperAdminDash from './pages/admin/SuperAdminDash';
 
@@ -9,6 +9,7 @@ import OrgLayout from './pages/org/OrgLayout';
 import OrgList from './pages/org/OrgList';
 import OrgCreate from './pages/org/OrgCreate';
 import CampaignCreate from './pages/org/CampaignCreate';
+import CampaignList from './pages/org/CampaignList';
 
 // Quick placeholder components so the router has something to render
 const PublicFeed = () => <div className="p-10 text-2xl font-bold text-center">Public Charity Feed</div>;
@@ -27,10 +28,9 @@ function App() {
           <Route path="/organization" element={<OrgLayout />}>
             {/* Index maps to /organization exactly */}
             <Route index element={<OrgList />} /> 
-            {/* Maps to /organization/new */}
             <Route path="new" element={<OrgCreate />} />
-            {/* Maps to /organization/:id/campaign/new */}
             <Route path=":id/campaign/new" element={<CampaignCreate />} />
+            <Route path=":id/campaigns" element={<CampaignList />} />
           </Route>
         </Route>
 
