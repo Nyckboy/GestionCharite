@@ -28,6 +28,12 @@ public class CharityActionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(actionService.createAction(request, loggedInUserEmail));
     }
 
+    // 🌍 PUBLIC: View all actions
+    @GetMapping
+    public ResponseEntity<List<ActionResponse>> getAllActions() {
+        return ResponseEntity.ok(actionService.getAllActions());
+    }
+
     // 🌍 PUBLIC: Anyone can view actions, no token required
     @GetMapping("/category/{category}")
     public ResponseEntity<List<ActionResponse>> getActionsByCategory(@PathVariable ActionCategory category) {

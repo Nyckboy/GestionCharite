@@ -63,7 +63,14 @@ public class CharityActionService {
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
-    }
+  }
+  // 🌍 PUBLIC METHOD: Fetch absolutely all campaigns for the homepage
+    public List<ActionResponse> getAllActions() {
+        return actionRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+  }
 
   private ActionResponse mapToResponse(CharityAction action) {
     return ActionResponse.builder()
