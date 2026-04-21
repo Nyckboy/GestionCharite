@@ -10,9 +10,7 @@ import OrgList from './pages/org/OrgList';
 import OrgCreate from './pages/org/OrgCreate';
 import CampaignCreate from './pages/org/CampaignCreate';
 import CampaignList from './pages/org/CampaignList';
-
-// Quick placeholder components so the router has something to render
-const PublicFeed = () => <div className="p-10 text-2xl font-bold text-center">Public Charity Feed</div>;
+import PublicFeed from './pages/public/PublicFeed';
 
 function App() {
   return (
