@@ -1,5 +1,6 @@
 package com.project.GestionCharite.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +37,10 @@ public class DonationService {
         // 2. Find the Charity Action they are donating to
         CharityAction action = actionRepository.findById(request.getActionId())
                 .orElseThrow(() -> new RuntimeException("Charity Action not found"));
+
+        BigDecimal newTotal = action.getCurrentAmount().add(request.getAmount());
+        action.setCurrentAmount(newTotal);
+        actionRepository.save(action);
 
         // 3. Build and save the Donation
         Donation donation = Donation.builder()

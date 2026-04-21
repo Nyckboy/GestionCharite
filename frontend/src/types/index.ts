@@ -28,6 +28,7 @@ export interface CharityAction {
   actionDate: string;
   location: string;
   targetAmount: number;
+  currentAmount: number;
   category: Category;
   organizationId: number;
 }
