@@ -12,6 +12,7 @@ import CampaignCreate from './pages/org/CampaignCreate';
 import CampaignList from './pages/org/CampaignList';
 import PublicFeed from './pages/public/PublicFeed';
 import PublicLayout from './pages/public/PublicLayout';
+import DonationCheckout from './pages/public/DonationCheckout';
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
         {/* NESTED ROUTES FOR PUBLIC FACING PAGES */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<PublicFeed />} />
-          {/* <Route path="/donate/:actionId" element={<DonationCheckout />} /> */}
+          <Route path="/donate/:actionId" element={<DonationCheckout />} />
         </Route>
 
         {/* Protected Route for Organization Admins */}
