@@ -11,6 +11,7 @@ import OrgCreate from './pages/org/OrgCreate';
 import CampaignCreate from './pages/org/CampaignCreate';
 import CampaignList from './pages/org/CampaignList';
 import PublicFeed from './pages/public/PublicFeed';
+import PublicLayout from './pages/public/PublicLayout';
 
 function App() {
   return (
@@ -19,7 +20,11 @@ function App() {
         {/* Public & Auth Routes (No guards needed) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<PublicFeed />} />
+        {/* NESTED ROUTES FOR PUBLIC FACING PAGES */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<PublicFeed />} />
+          {/* <Route path="/donate/:actionId" element={<DonationCheckout />} /> */}
+        </Route>
 
         {/* Protected Route for Organization Admins */}
         <Route element={<ProtectedRoute allowedRoles={['ORG_ADMIN']} />}>
