@@ -25,6 +25,11 @@ export interface CharityAction {
   id: number;
   title: string;
   description: string;
+  // --- Proposed Future Backend Fields ---
+  longStory?: string; // For the rich text description
+  updates?: { date: string; message: string }[]; // For the timeline
+  organizationName?: string; // To display who is running it
+  // --------------------------------------
   actionDate: string;
   location: string;
   targetAmount: number;
