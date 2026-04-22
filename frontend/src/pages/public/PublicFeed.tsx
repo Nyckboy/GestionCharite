@@ -85,7 +85,7 @@ const PublicFeed = () => {
                     Campaign Image (Future Feature)
                   </div>
 
-                  <div className="flex flex-col flex-grow p-6">
+                  <div className="flex flex-col grow p-6">
                     <div className="flex items-start justify-between mb-2">
                       <span className="px-2 py-1 text-xs font-bold text-blue-800 uppercase bg-blue-100 rounded">
                         {campaign.category}
@@ -93,7 +93,7 @@ const PublicFeed = () => {
                     </div>
                     
                     <h3 className="mb-2 text-xl font-bold text-gray-800 line-clamp-2">{campaign.title}</h3>
-                    <p className="flex-grow mb-4 text-sm text-gray-600 line-clamp-3">{campaign.description}</p>
+                    <p className="grow mb-4 text-sm text-gray-600 line-clamp-3">{campaign.description}</p>
                     
                     <div className="mb-4">
                       <div className="flex justify-between mb-1 text-xs font-semibold text-gray-600">

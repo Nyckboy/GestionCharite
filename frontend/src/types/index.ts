@@ -32,3 +32,11 @@ export interface CharityAction {
   category: Category;
   organizationId: number;
 }
+
+export interface Donation {
+  id: number;
+  amount: number;
+  donationDate: string;
+  status: string;
+  firstName?: string; // Optional, assuming your backend includes the donor's name!
+}
