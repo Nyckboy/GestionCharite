@@ -71,12 +71,20 @@ public class CharityActionService {
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
   }
+  // 🌍 PUBLIC METHOD: Fetch a single action's details by ID
+    public ActionResponse getActionById(Long id) {
+        CharityAction action = actionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Charity Action not found"));
+        return mapToResponse(action);
+    }
 
   private ActionResponse mapToResponse(CharityAction action) {
     return ActionResponse.builder()
             .id(action.getId())
             .title(action.getTitle())
             .description(action.getDescription())
+            .longStory(action.getLongStory())
+            .updates(action.getUpdates())
             .actionDate(action.getActionDate())
             .targetAmount(action.getTargetAmount())
             .currentAmount(action.getCurrentAmount())

@@ -7,6 +7,7 @@ import com.project.GestionCharite.models.enums.ActionCategory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "charity_actions")
@@ -52,6 +53,14 @@ public class CharityAction {
 
   @Column(updatable = false)
   private LocalDateTime createdAt;
+
+  @Column(columnDefinition = "TEXT")
+    private String longStory;
+
+  // This creates a separate lightweight table in your database to hold the updates
+  @ElementCollection
+  @CollectionTable(name = "action_updates", joinColumns = @JoinColumn(name = "action_id"))
+  private List<ActionUpdate> updates;
 
   @PrePersist
   protected void onCreate() {

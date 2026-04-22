@@ -3,7 +3,9 @@ package com.project.GestionCharite.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.project.GestionCharite.models.ActionUpdate;
 import com.project.GestionCharite.models.enums.ActionCategory;
 import com.project.GestionCharite.models.enums.DonationStatus;
 
@@ -29,6 +31,8 @@ public class CharityDTOs {
     private Long id;
     private String title;
     private String description;
+    private String longStory; 
+    private List<ActionUpdate> updates; 
     private LocalDate actionDate;
     private BigDecimal targetAmount;
     private BigDecimal currentAmount;
