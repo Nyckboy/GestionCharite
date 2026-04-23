@@ -1,5 +1,6 @@
 package com.project.GestionCharite.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.GestionCharite.dto.CharityDTOs.ActionRequest;
 import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
+import com.project.GestionCharite.dto.CharityDTOs.UpdateRequest;
+import com.project.GestionCharite.models.ActionUpdate;
 import com.project.GestionCharite.models.CharityAction;
 import com.project.GestionCharite.models.Organization;
 import com.project.GestionCharite.models.enums.ActionCategory;
@@ -58,25 +61,47 @@ public class CharityActionService {
   }
 
   // 🌍 PUBLIC METHOD: Fetch all actions for a specific organization
-    public List<ActionResponse> getActionsByOrganization(Long organizationId) {
+  public List<ActionResponse> getActionsByOrganization(Long organizationId) {
         return actionRepository.findByOrganizationId(organizationId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
   }
   // 🌍 PUBLIC METHOD: Fetch absolutely all campaigns for the homepage
-    public List<ActionResponse> getAllActions() {
+  public List<ActionResponse> getAllActions() {
         return actionRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
   }
   // 🌍 PUBLIC METHOD: Fetch a single action's details by ID
-    public ActionResponse getActionById(Long id) {
+  public ActionResponse getActionById(Long id) {
         CharityAction action = actionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Charity Action not found"));
         return mapToResponse(action);
+  }
+
+  // 🔒 SECURE METHOD: Post a new update to a campaign
+    @Transactional
+  public ActionUpdate addUpdateToAction(Long actionId, UpdateRequest request, String loggedInUserEmail) {
+    
+    CharityAction action = actionRepository.findById(actionId)
+            .orElseThrow(() -> new RuntimeException("Charity Action not found"));
+
+    // 🛡️ THE OWNERSHIP CHECK: Are you the manager of the org running this campaign?
+    if (!action.getOrganization().getManager().getEmail().equals(loggedInUserEmail)) {
+        throw new RuntimeException("Forbidden: You do not own the organization running this campaign.");
     }
+
+    // Create the new update with today's date automatically
+    ActionUpdate newUpdate = new ActionUpdate(LocalDate.now(), request.getMessage());
+
+    // Add it to the list and save the action
+    action.getUpdates().add(newUpdate);
+    actionRepository.save(action);
+
+    return newUpdate; 
+  }
 
   private ActionResponse mapToResponse(CharityAction action) {
     return ActionResponse.builder()

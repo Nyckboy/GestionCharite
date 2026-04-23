@@ -9,8 +9,10 @@ import com.project.GestionCharite.models.ActionUpdate;
 import com.project.GestionCharite.models.enums.ActionCategory;
 import com.project.GestionCharite.models.enums.DonationStatus;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class CharityDTOs {
   // --- CHARITY ACTION DTOs ---
@@ -40,20 +42,28 @@ public class CharityDTOs {
     private String organizationName; // Just the name, not the whole Org object
   } 
 
-  // --- DONATION DTOs ---
-
-  @Data @Builder
-  public static class DonationRequest {
-    private BigDecimal amount;
-    private Long actionId;
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class UpdateRequest {
+      private String message;
   }
 
-  @Data @Builder
-  public static class DonationResponse {
-    private Long id;
-    private BigDecimal amount;
-    private String actionTitle;
-    private DonationStatus status;
-    private LocalDateTime donationDate;
-  }
+  // // --- DONATION DTOs ---
+
+  // @Data @Builder
+  // public static class DonationRequest {
+  //   private BigDecimal amount;
+  //   private Long actionId;
+  // }
+
+  // @Data @Builder
+  // public static class DonationResponse {
+  //   private Long id;
+  //   private BigDecimal amount;
+  //   private String actionTitle;
+  //   private DonationStatus status;
+  //   private LocalDateTime donationDate;
+  // }
 }

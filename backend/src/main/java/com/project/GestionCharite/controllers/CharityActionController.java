@@ -2,6 +2,8 @@ package com.project.GestionCharite.controllers;
 
 import com.project.GestionCharite.dto.CharityDTOs.ActionRequest;
 import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
+import com.project.GestionCharite.dto.CharityDTOs.UpdateRequest;
+import com.project.GestionCharite.models.ActionUpdate;
 import com.project.GestionCharite.models.enums.ActionCategory;
 import com.project.GestionCharite.services.CharityActionService;
 import lombok.RequiredArgsConstructor;
@@ -49,5 +51,18 @@ public class CharityActionController {
     @GetMapping("/organization/{id}")
     public ResponseEntity<List<ActionResponse>> getActionsByOrganization(@PathVariable Long id) {
         return ResponseEntity.ok(actionService.getActionsByOrganization(id));
+    }
+
+    // 🔒 SECURE: Only the ORG_ADMIN who owns the action can post an update
+    @PostMapping("/{actionId}/updates")
+    public ResponseEntity<ActionUpdate> postUpdate(
+            @PathVariable Long actionId,
+            @RequestBody UpdateRequest request,
+            Authentication authentication) {
+        
+        String loggedInUserEmail = authentication.getName();
+        
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(actionService.addUpdateToAction(actionId, request, loggedInUserEmail));
     }
 }

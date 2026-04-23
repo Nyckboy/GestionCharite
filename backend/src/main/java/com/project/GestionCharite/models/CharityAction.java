@@ -7,6 +7,7 @@ import com.project.GestionCharite.models.enums.ActionCategory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -60,7 +61,7 @@ public class CharityAction {
   // This creates a separate lightweight table in your database to hold the updates
   @ElementCollection
   @CollectionTable(name = "action_updates", joinColumns = @JoinColumn(name = "action_id"))
-  private List<ActionUpdate> updates;
+  private List<ActionUpdate> updates = new ArrayList<>();
 
   @PrePersist
   protected void onCreate() {
