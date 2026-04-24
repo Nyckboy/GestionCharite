@@ -40,9 +40,43 @@ public class OrganizationController {
         return ResponseEntity.ok(organizationService.getMyOrganizations(managerEmail));
     }
 
+
+    // 🔒 SECURE: Edit/Update an existing organization
+    @PutMapping("/{id}")
+    public ResponseEntity<OrgResponse> updateOrganization(
+            @PathVariable Long id,
+            @RequestBody OrgRequest request,
+            Authentication authentication) {
+        
+        String loggedInUserEmail = authentication.getName();
+        return ResponseEntity.ok(organizationService.updateOrganization(id, request, loggedInUserEmail));
+    }
+
+    // 🔒 SECURE: Delete an organization (if it has no campaigns)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteOrganization(
+            @PathVariable Long id,
+            Authentication authentication) {
+        
+        String loggedInUserEmail = authentication.getName();
+        
+        try {
+            organizationService.deleteOrganization(id, loggedInUserEmail);
+            return ResponseEntity.ok("Organization successfully deleted.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     // 🌍 PUBLIC: Anyone can view the list of validated organizations
     @GetMapping
     public ResponseEntity<List<OrgResponse>> getValidatedOrganizations() {
         return ResponseEntity.ok(organizationService.getAllValidatedOrganizations());
+    }
+
+    // 🌍 PUBLIC: Get details of a specific organization by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<OrgResponse> getOrganizationById(@PathVariable Long id) {
+        return ResponseEntity.ok(organizationService.getOrganizationById(id));
     }
 }

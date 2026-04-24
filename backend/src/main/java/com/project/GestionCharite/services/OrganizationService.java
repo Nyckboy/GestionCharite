@@ -4,10 +4,12 @@ import com.project.GestionCharite.dto.OrganizationDTOs.OrgRequest;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgResponse;
 import com.project.GestionCharite.models.Organization;
 import com.project.GestionCharite.models.User;
+import com.project.GestionCharite.repositories.CharityActionRepository;
 import com.project.GestionCharite.repositories.OrganizationRepository;
 import com.project.GestionCharite.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,7 @@ public class OrganizationService {
 
     private final OrganizationRepository organizationRepository;
     private final UserRepository userRepository;
+    private final CharityActionRepository actionRepository;
 
     public OrgResponse createOrganization(OrgRequest request, String managerEmail) {
         // Find the user who is currently logged in
@@ -51,6 +54,61 @@ public class OrganizationService {
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+
+    // 🔒 SECURE METHOD: Update an existing organization
+    @Transactional
+    public OrgResponse updateOrganization(Long id, OrgRequest request, String loggedInUserEmail) {
+        Organization org = organizationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+
+        // 🛡️ OWNERSHIP CHECK: Only the manager can edit their organization
+        if (!org.getManager().getEmail().equals(loggedInUserEmail)) {
+            throw new RuntimeException("Forbidden: You do not own this organization.");
+        }
+
+        // Update the fields
+        org.setName(request.getName());
+        org.setLegalAddress(request.getLegalAddress());
+        org.setTaxIdentificationNumber(request.getTaxIdentificationNumber());
+        org.setPrimaryContact(request.getPrimaryContact());
+        org.setDescription(request.getDescription());
+        
+        // Note: We intentionally DO NOT change the isValidated status here.
+        // It keeps its current approval status.
+
+        Organization updatedOrg = organizationRepository.save(org);
+        return mapToResponse(updatedOrg);
+    }
+
+    // 🔒 SECURE METHOD: Delete an organization (Smart Delete)
+    @Transactional
+    public void deleteOrganization(Long id, String loggedInUserEmail) {
+        Organization org = organizationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+
+        // 🛡️ OWNERSHIP CHECK
+        if (!org.getManager().getEmail().equals(loggedInUserEmail)) {
+            throw new RuntimeException("Forbidden: You do not own this organization.");
+        }
+
+        // 🛑 INTEGRITY PROTECTION CHECK: Does this org have campaigns?
+        // (Assuming you have CharityActionRepository injected)
+        boolean hasActiveCampaigns = !actionRepository.findByOrganizationId(id).isEmpty();
+        if (hasActiveCampaigns) {
+            throw new RuntimeException("Cannot delete this organization. It has linked charity campaigns. Please delete or close all campaigns first.");
+        }
+
+        organizationRepository.delete(org);
+    }
+
+    // 🌍 PUBLIC METHOD: Fetch a single organization's details by ID
+    public OrgResponse getOrganizationById(Long id) {
+        Organization org = organizationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+        
+        return mapToResponse(org);
     }
 
     // --------------------------------------------------------

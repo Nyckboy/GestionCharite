@@ -15,6 +15,7 @@ import PublicLayout from './pages/public/PublicLayout';
 import CampaignDetail from './pages/public/CampaignDetail';
 import CampaignPostUpdate from './pages/org/CampaignPostUpdate';
 import CampaignEdit from './pages/org/CampaignEdit';
+import OrgEdit from './pages/org/OrgEdit';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             {/* Index maps to /organization exactly */}
             <Route index element={<OrgList />} /> 
             <Route path="new" element={<OrgCreate />} />
+            <Route path=":id/edit" element={<OrgEdit />} />
             <Route path=":id/campaign/new" element={<CampaignCreate />} />
             <Route path=":id/campaigns" element={<CampaignList />} />
             <Route path=":id/campaign/:actionId/update" element={<CampaignPostUpdate />} />
