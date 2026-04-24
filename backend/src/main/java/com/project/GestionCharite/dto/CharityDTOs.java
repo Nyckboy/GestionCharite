@@ -39,6 +39,7 @@ public class CharityDTOs {
     private BigDecimal targetAmount;
     private BigDecimal currentAmount;
     private ActionCategory category;
+    private String location;
     private String organizationName; // Just the name, not the whole Org object
   } 
 

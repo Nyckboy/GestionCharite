@@ -1,0 +1,31 @@
+# Build artifacts
+target/
+build/
+out/
+bin/
+
+# Dependency directories
+node_modules/
+.mvn/
+.gradle/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Generated sources (e.g., MapStruct, QueryDSL, Jooq)
+src/main/generated/
+**/generated-sources/
+
+# Static resources you may want to skip
+src/main/resources/static/
+src/main/resources/templates/
+
+# Configuration files that should not be reformatted
+application.properties
+application.yml
+pom.xml
+build.gradle

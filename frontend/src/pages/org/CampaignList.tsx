@@ -13,99 +13,111 @@ const CampaignList = () => {
     const fetchCampaigns = async () => {
       setIsLoading(true);
       try {
-        // Assuming your Spring Boot backend has or will have this endpoint
         const response = await apiClient.get<CharityAction[]>(`/actions/organization/${id}`);
         setCampaigns(response.data);
       } catch (err: any) {
-        console.error('Failed to fetch campaigns', err);
-        setError('Could not load campaigns. Please try again.');
+        console.error("Failed to fetch campaigns", err);
+        setError("Could not load campaigns. Please try again.");
       } finally {
         setIsLoading(false);
       }
     };
+
     if (id) {
       fetchCampaigns();
     }
   }, [id]);
 
+  // NEW: Delete Handler
+  const handleDelete = async (actionId: number) => {
+    // 1. Ask for confirmation so they don't click it by accident
+    const isConfirmed = window.confirm("Are you sure you want to delete this campaign? This action cannot be undone.");
+    
+    if (!isConfirmed) return;
+
+    try {
+      // 2. Send the delete request to the backend
+      await apiClient.delete(`/actions/${actionId}`);
+      
+      // 3. Remove it from the UI immediately without reloading the page
+      setCampaigns((prev) => prev.filter((campaign) => campaign.id !== actionId));
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Failed to delete campaign. It may have existing donations.");
+    }
+  };
+
   return (
     <div className="fade-in">
-      <Link to="/organization" className="mb-6 inline-block text-sm text-blue-600 hover:underline">
+      <Link to="/organization" className="inline-block mb-6 text-sm text-blue-600 hover:underline">
         &larr; Back to Organizations
       </Link>
-
-      <div className="mb-6 flex items-center justify-between">
+      
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-800">Manage Campaigns</h2>
           <p className="text-gray-600">View and manage your charity actions.</p>
         </div>
-        <Link
-          to={`/organization/${id}/campaign/new`}
-          className="rounded bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700"
+        <Link 
+          to={`/organization/${id}/campaign/new`} 
+          className="px-4 py-2 font-semibold text-white transition-colors bg-green-600 rounded hover:bg-green-700"
         >
           + New Campaign
         </Link>
       </div>
 
-      {error && <div className="mb-6 rounded bg-red-100 p-4 text-red-800">{error}</div>}
+      {error && <div className="p-4 mb-6 text-red-800 bg-red-100 rounded">{error}</div>}
 
       {isLoading ? (
-        <div className="animate-pulse rounded bg-white p-8 text-center text-gray-500 shadow-sm">
+        <div className="p-8 text-center text-gray-500 bg-white rounded shadow-sm animate-pulse">
           Loading campaigns...
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="rounded bg-white p-8 text-center text-gray-500 shadow-sm">
+        <div className="p-8 text-center text-gray-500 bg-white rounded shadow-sm">
           No campaigns created for this organization yet.
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {campaigns.map((campaign) => (
-            <div
-              key={campaign.id}
-              className="flex flex-col justify-between rounded-lg border bg-white p-6 shadow-sm"
-            >
+            <div key={campaign.id} className="flex flex-col justify-between p-6 bg-white border rounded-lg shadow-sm">
               <div>
-                <div className="mb-2 flex items-start justify-between">
+                <div className="flex items-start justify-between mb-2">
                   <h3 className="text-xl font-bold text-gray-800">{campaign.title}</h3>
-                  <span className="rounded bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
+                  <span className="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded">
                     {campaign.category}
                   </span>
                 </div>
-                <p className="mb-4 line-clamp-3 text-sm text-gray-600">{campaign.description}</p>
-
+                <p className="mb-4 text-sm text-gray-600 line-clamp-3">{campaign.description}</p>
+                
                 <div className="space-y-1 text-sm text-gray-500">
-                  <p>
-                    <strong>Target:</strong> {campaign.targetAmount} MAD
-                  </p>
-                  <p>
-                    <strong>Date:</strong> {campaign.actionDate}
-                  </p>
-                  <p>
-                    <strong>Location:</strong> {campaign.location}
-                  </p>
+                  <p><strong>Target:</strong> {campaign.targetAmount} MAD</p>
+                  <p><strong>Date:</strong> {campaign.actionDate}</p>
                 </div>
               </div>
+              
+              {/* UPDATED: Action Buttons */}
+              <div className="flex gap-2 pt-4 mt-6 border-t border-gray-100">
+                 <Link 
+                   to={`/organization/${id}/campaign/${campaign.id}/update`}
+                   className="w-1/3 px-2 py-2 text-xs font-semibold text-center text-blue-700 transition-colors bg-blue-50 rounded hover:bg-blue-100"
+                 >
+                   + Update
+                 </Link>
+                 
+                 {/* Links to the new Edit Page */}
+                 <Link 
+                   to={`/organization/${id}/campaign/${campaign.id}/edit`}
+                   className="w-1/3 px-2 py-2 text-xs font-semibold text-center text-gray-700 transition-colors bg-gray-100 rounded hover:bg-gray-200"
+                 >
+                   Edit
+                 </Link>
 
-              {/* Future Update / Delete Buttons */}
-              <div className="mt-6 flex gap-2 border-t border-gray-100 pt-4">
-                <Link
-                  to={`/organization/${id}/campaign/${campaign.id}/update`}
-                  className="w-1/2 rounded bg-blue-50 px-3 py-2 text-center text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100"
-                >
-                  + Post Update
-                </Link>
-                <button
-                  disabled
-                  className="w-1/4 cursor-not-allowed rounded bg-gray-100 px-3 py-2 text-sm text-gray-400"
-                >
-                  Edit (Soon)
-                </button>
-                <button
-                  disabled
-                  className="w-1/4 cursor-not-allowed rounded bg-gray-100 px-3 py-2 text-sm text-gray-400"
-                >
-                  Delete (Soon)
-                </button>
+                 {/* Fires the delete function */}
+                 <button 
+                   onClick={() => handleDelete(campaign.id)}
+                   className="w-1/3 px-2 py-2 text-xs font-semibold text-center text-red-700 transition-colors bg-red-50 rounded hover:bg-red-100"
+                 >
+                   Delete
+                 </button>
               </div>
             </div>
           ))}

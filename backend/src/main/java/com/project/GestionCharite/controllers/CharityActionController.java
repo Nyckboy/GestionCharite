@@ -65,4 +65,27 @@ public class CharityActionController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(actionService.addUpdateToAction(actionId, request, loggedInUserEmail));
     }
+
+    // 🔒 SECURE: Edit/Update an existing campaign
+    @PutMapping("/{actionId}")
+    public ResponseEntity<ActionResponse> updateAction(
+            @PathVariable Long actionId,
+            @RequestBody ActionRequest request,
+            Authentication authentication) {
+        
+        String loggedInUserEmail = authentication.getName();
+        return ResponseEntity.ok(actionService.updateAction(actionId, request, loggedInUserEmail));
+    }
+
+    // 🔒 SECURE: Delete a campaign (if no money has been raised)
+    @DeleteMapping("/{actionId}")
+    public ResponseEntity<String> deleteAction(
+            @PathVariable Long actionId,
+            Authentication authentication) {
+        
+        String loggedInUserEmail = authentication.getName();
+        actionService.deleteAction(actionId, loggedInUserEmail);
+        
+        return ResponseEntity.ok("Campaign successfully deleted.");
+    }
 }

@@ -1,5 +1,6 @@
 package com.project.GestionCharite.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -103,6 +104,48 @@ public class CharityActionService {
     return newUpdate; 
   }
 
+  // 🔒 SECURE METHOD: Update an existing campaign
+  @Transactional
+  public ActionResponse updateAction(Long actionId, ActionRequest request, String loggedInUserEmail) {
+      CharityAction action = actionRepository.findById(actionId)
+              .orElseThrow(() -> new RuntimeException("Charity Action not found"));
+
+      // 🛡️ OWNERSHIP CHECK
+      if (!action.getOrganization().getManager().getEmail().equals(loggedInUserEmail)) {
+          throw new RuntimeException("Forbidden: You do not own the organization running this campaign.");
+      }
+
+      // Update the fields
+      action.setTitle(request.getTitle());
+      action.setDescription(request.getDescription());
+      action.setActionDate(request.getActionDate());
+      action.setLocation(request.getLocation());
+      action.setTargetAmount(request.getTargetAmount());
+      action.setCategory(request.getCategory());
+      
+      CharityAction updatedAction = actionRepository.save(action);
+      return mapToResponse(updatedAction);
+  }
+
+  // 🔒 SECURE METHOD: Delete a campaign (Smart Delete)
+  @Transactional
+  public void deleteAction(Long actionId, String loggedInUserEmail) {
+      CharityAction action = actionRepository.findById(actionId)
+              .orElseThrow(() -> new RuntimeException("Charity Action not found"));
+
+      // 🛡️ OWNERSHIP CHECK
+      if (!action.getOrganization().getManager().getEmail().equals(loggedInUserEmail)) {
+          throw new RuntimeException("Forbidden: You do not own the organization running this campaign.");
+      }
+
+      // 💰 FINANCIAL PROTECTION CHECK
+      if (action.getCurrentAmount().compareTo(BigDecimal.ZERO) > 0) {
+          throw new RuntimeException("Cannot delete a campaign that has already received donations. Please close the campaign instead.");
+      }
+
+      actionRepository.delete(action);
+  }
+
   private ActionResponse mapToResponse(CharityAction action) {
     return ActionResponse.builder()
             .id(action.getId())
@@ -115,6 +158,7 @@ public class CharityActionService {
             .currentAmount(action.getCurrentAmount())
             .category(action.getCategory())
             .organizationName(action.getOrganization().getName())
+            .location(action.getLocation())
             .build();
   }
 }

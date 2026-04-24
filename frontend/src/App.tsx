@@ -14,6 +14,7 @@ import PublicFeed from './pages/public/PublicFeed';
 import PublicLayout from './pages/public/PublicLayout';
 import CampaignDetail from './pages/public/CampaignDetail';
 import CampaignPostUpdate from './pages/org/CampaignPostUpdate';
+import CampaignEdit from './pages/org/CampaignEdit';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path=":id/campaign/new" element={<CampaignCreate />} />
             <Route path=":id/campaigns" element={<CampaignList />} />
             <Route path=":id/campaign/:actionId/update" element={<CampaignPostUpdate />} />
+            <Route path=":id/campaign/:actionId/edit" element={<CampaignEdit />} />
           </Route>
         </Route>
 
