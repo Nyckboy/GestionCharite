@@ -21,15 +21,19 @@ export interface Organization {
 
 export type Category = 'EDUCATION' | 'ENVIRONNEMENT' | 'SANTE' | 'URGENCE'; // Expand as needed
 
+export interface ActionUpdate {
+  id?: number;
+  date: string; // The backend should return this formatted, e.g., "2026-04-22"
+  message: string;
+}
+
 export interface CharityAction {
   id: number;
   title: string;
   description: string;
-  // --- Proposed Future Backend Fields ---
   longStory?: string; // For the rich text description
-  updates?: { date: string; message: string }[]; // For the timeline
+  updates?: ActionUpdate[]; // For the timeline
   organizationName?: string; // To display who is running it
-  // --------------------------------------
   actionDate: string;
   location: string;
   targetAmount: number;
