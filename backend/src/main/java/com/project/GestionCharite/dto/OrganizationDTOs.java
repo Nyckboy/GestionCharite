@@ -29,9 +29,11 @@ public class OrganizationDTOs {
         private Long id;
         private String name;
         private String primaryContact;
+        private String legalAddress;
         @JsonProperty("isValidated")
         private boolean isValidated;
         private String managerName;
         private String taxIdentificationNumber;
+        private String description;
     }
 }

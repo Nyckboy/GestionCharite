@@ -145,6 +145,8 @@ public class OrganizationService {
                 .isValidated(org.isValidated())
                 .managerName(org.getManager().getFirstName() + " " + org.getManager().getLastName())
                 .taxIdentificationNumber(org.getTaxIdentificationNumber())
+                .legalAddress(org.getLegalAddress())
+                .description(org.getDescription())
                 .build();
     }
 }
