@@ -146,7 +146,7 @@ public class CharityActionService {
       actionRepository.delete(action);
   }
 
-  private ActionResponse mapToResponse(CharityAction action) {
+  public ActionResponse mapToResponse(CharityAction action) {
     return ActionResponse.builder()
             .id(action.getId())
             .title(action.getTitle())

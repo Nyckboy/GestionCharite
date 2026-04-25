@@ -22,4 +22,6 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
 
   List<Organization> findByManagerEmail(String email);
 
+  long countByIsValidatedFalse();
+
 }
