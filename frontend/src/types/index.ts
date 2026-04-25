@@ -2,6 +2,7 @@ export type Role = 'USER' | 'ORG_ADMIN' | 'SUPER_ADMIN';
 
 export interface AuthUser {
   firstName: string;
+  lastName: string;
   role: Role;
 }
 
@@ -48,4 +49,21 @@ export interface Donation {
   donationDate: string;
   status: string;
   firstName?: string; // Optional, assuming your backend includes the donor's name!
+}
+
+export interface AdminStats {
+  totalOrganizations: number;
+  pendingApprovals: number;
+  totalCampaigns: number;
+  totalRaised: number;
+  totalUsers: number;
+}
+
+export interface PlatformUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: 'USER' | 'ORG_ADMIN' | 'SUPER_ADMIN';
+  // Add any other fields your backend returns, like 'createdAt' or 'isActive'
 }
