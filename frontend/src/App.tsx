@@ -16,6 +16,11 @@ import CampaignDetail from './pages/public/CampaignDetail';
 import CampaignPostUpdate from './pages/org/CampaignPostUpdate';
 import CampaignEdit from './pages/org/CampaignEdit';
 import OrgEdit from './pages/org/OrgEdit';
+import AdminOrgApprovals from './pages/admin/AdminOrgApprovals';
+import AdminOverview from './pages/admin/AdminOverview';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminCampaigns from './pages/admin/AdminCampaigns';
+import AdminUsers from './pages/admin/AdminUsers';
 
 function App() {
   return (
@@ -34,7 +39,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['ORG_ADMIN']} />}>
           <Route path="/organization" element={<OrgLayout />}>
             {/* Index maps to /organization exactly */}
-            <Route index element={<OrgList />} /> 
+            <Route index element={<OrgList />} />
             <Route path="new" element={<OrgCreate />} />
             <Route path=":id/edit" element={<OrgEdit />} />
             <Route path=":id/campaign/new" element={<CampaignCreate />} />
@@ -46,7 +51,15 @@ function App() {
 
         {/* Protected Route for Super Admins */}
         <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']} />}>
-          <Route path="/admin" element={<SuperAdminDash />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            {/* The default dashboard overview */}
+            <Route index element={<AdminOverview />} />
+            {/* The approvals page */}
+            <Route path="approvals" element={<AdminOrgApprovals />} />
+            {/* Placeholders for future expansion */}
+            <Route path="campaigns" element={<AdminCampaigns />} />
+            <Route path="users" element={<AdminUsers />} />
+          </Route>
         </Route>
 
         {/* Catch-all redirect */}
