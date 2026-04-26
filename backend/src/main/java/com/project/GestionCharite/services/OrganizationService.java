@@ -1,7 +1,9 @@
 package com.project.GestionCharite.services;
 
+import com.project.GestionCharite.dto.OrganizationDTOs.OrgAdminStatsResponse;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgRequest;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgResponse;
+import com.project.GestionCharite.models.CharityAction;
 import com.project.GestionCharite.models.Organization;
 import com.project.GestionCharite.models.User;
 import com.project.GestionCharite.repositories.CharityActionRepository;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -135,6 +138,30 @@ public class OrganizationService {
         Organization updatedOrg = organizationRepository.save(org);
         
         return mapToResponse(updatedOrg);
+    }
+
+    // 🔒 SECURE: Get statistics for the logged-in ORG_ADMIN
+    public OrgAdminStatsResponse getMyOrgStats(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 1. Get total orgs
+        long totalOrgs = organizationRepository.findByManagerId(user.getId()).size();
+
+        // 2. Get all campaigns belonging to those orgs
+        List<CharityAction> myCampaigns = actionRepository.findByOrganizationManagerId(user.getId());
+        long totalCampaigns = myCampaigns.size();
+
+        // 3. Safely sum the currentAmount across all campaigns
+        BigDecimal totalRaised = myCampaigns.stream()
+                .map(action -> action.getCurrentAmount() != null ? action.getCurrentAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return OrgAdminStatsResponse.builder()
+                .totalOrganizations(totalOrgs)
+                .totalCampaigns(totalCampaigns)
+                .totalRaised(totalRaised)
+                .build();
     }
 
     private OrgResponse mapToResponse(Organization org) {

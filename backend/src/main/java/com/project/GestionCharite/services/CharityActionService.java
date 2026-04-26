@@ -14,9 +14,11 @@ import com.project.GestionCharite.dto.CharityDTOs.UpdateRequest;
 import com.project.GestionCharite.models.ActionUpdate;
 import com.project.GestionCharite.models.CharityAction;
 import com.project.GestionCharite.models.Organization;
+import com.project.GestionCharite.models.User;
 import com.project.GestionCharite.models.enums.ActionCategory;
 import com.project.GestionCharite.repositories.CharityActionRepository;
 import com.project.GestionCharite.repositories.OrganizationRepository;
+import com.project.GestionCharite.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,8 @@ import lombok.RequiredArgsConstructor;
 public class CharityActionService {
   private final CharityActionRepository actionRepository;
   private final OrganizationRepository organizationRepository;
+  private final UserRepository userRepository;
+
 
   @Transactional
   public ActionResponse createAction(ActionRequest request, String loggedInUserEmail) {
@@ -144,6 +148,17 @@ public class CharityActionService {
       }
 
       actionRepository.delete(action);
+  }
+
+  // 🔒 SECURE: Get all campaigns for the logged-in ORG_ADMIN
+  public List<ActionResponse> getMyCampaigns(String email) {
+      User user = userRepository.findByEmail(email)
+              .orElseThrow(() -> new RuntimeException("User not found"));
+
+      return actionRepository.findByOrganizationManagerId(user.getId())
+              .stream()
+              .map(this::mapToResponse) // Your existing public mapper!
+              .collect(Collectors.toList());
   }
 
   public ActionResponse mapToResponse(CharityAction action) {

@@ -1,5 +1,7 @@
 package com.project.GestionCharite.dto;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -35,5 +37,15 @@ public class OrganizationDTOs {
         private String managerName;
         private String taxIdentificationNumber;
         private String description;
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class OrgAdminStatsResponse {
+        private long totalOrganizations;
+        private long totalCampaigns;
+        private BigDecimal totalRaised;
     }
 }

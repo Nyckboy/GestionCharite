@@ -16,6 +16,7 @@ public interface CharityActionRepository extends JpaRepository<CharityAction, Lo
   
   List<CharityAction> findByCategory(ActionCategory category);
   List<CharityAction> findByOrganizationId(Long organizationId);
+  List<CharityAction> findByOrganizationManagerId(Long managerId);
   @Query("SELECT COALESCE(SUM(a.currentAmount), 0) FROM CharityAction a")
   BigDecimal sumTotalPlatformRaised();
   // Find actions where the target amount hasn't been reached yet

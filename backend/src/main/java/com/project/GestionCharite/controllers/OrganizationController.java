@@ -1,5 +1,6 @@
 package com.project.GestionCharite.controllers;
 
+import com.project.GestionCharite.dto.OrganizationDTOs.OrgAdminStatsResponse;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgRequest;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgResponse;
 import com.project.GestionCharite.services.OrganizationService;
@@ -66,6 +67,13 @@ public class OrganizationController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    // 🔒 SECURE: Get stats for ORG_ADMIN dashboard
+    @GetMapping("/me/stats")
+    public ResponseEntity<OrgAdminStatsResponse> getMyOrgStats(Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(organizationService.getMyOrgStats(email));
     }
 
     // 🌍 PUBLIC: Anyone can view the list of validated organizations

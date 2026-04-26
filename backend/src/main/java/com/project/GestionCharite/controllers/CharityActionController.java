@@ -88,4 +88,11 @@ public class CharityActionController {
         
         return ResponseEntity.ok("Campaign successfully deleted.");
     }
+
+    // 🔒 SECURE: Get all campaigns managed by this admin
+    @GetMapping("/me/all")
+    public ResponseEntity<List<ActionResponse>> getMyCampaigns(Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(actionService.getMyCampaigns(email));
+    }
 }
