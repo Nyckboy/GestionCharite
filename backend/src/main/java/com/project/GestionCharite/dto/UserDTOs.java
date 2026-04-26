@@ -40,4 +40,13 @@ public class UserDTOs {
         private String email;
         private String role;
     }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserProfileUpdateRequest {
+        private String firstName;
+        private String lastName;
+    }
 }
