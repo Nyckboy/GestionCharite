@@ -52,6 +52,14 @@ export interface Donation {
   firstName?: string; // Optional, assuming your backend includes the donor's name!
 }
 
+export interface UserDonation {
+  id: number;
+  amount: number;
+  donationDate: string;
+  status: string;
+  actionTitle: string; 
+}
+
 export interface AdminStats {
   totalOrganizations: number;
   pendingApprovals: number;
@@ -66,5 +74,4 @@ export interface PlatformUser {
   lastName: string;
   email: string;
   role: 'USER' | 'ORG_ADMIN' | 'SUPER_ADMIN';
-  // Add any other fields your backend returns, like 'createdAt' or 'isActive'
 }

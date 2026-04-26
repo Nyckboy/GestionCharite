@@ -22,6 +22,11 @@ import AdminCampaigns from './pages/admin/AdminCampaigns';
 import AdminUserList from './pages/admin/AdminUserList';
 import AdminUserCreate from './pages/admin/AdminUserCreate';
 import AdminUserEdit from './pages/admin/AdminUserEdit';
+import UserLayout from './pages/user/UserLayout';
+import UserProfile from './pages/user/UserProfile';
+import UserEditProfile from './pages/user/UserEditProfile';
+import UserDonations from './pages/user/UserDonations';
+
 function App() {
   return (
     <Router>
@@ -33,6 +38,15 @@ function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<PublicFeed />} />
           <Route path="/donate/:actionId" element={<CampaignDetail />} />
+        </Route>
+
+        {/* Protected Routes for Standard Users */}
+        <Route element={<ProtectedRoute allowedRoles={['USER']} />}>
+          <Route path="/profile" element={<UserLayout />}>
+            <Route index element={<UserProfile />} />
+            <Route path="edit" element={<UserEditProfile />} />
+            <Route path="donations" element={<UserDonations />} />
+          </Route>
         </Route>
 
         {/* Protected Route for Organization Admins */}
