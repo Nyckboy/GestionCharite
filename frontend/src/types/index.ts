@@ -1,6 +1,7 @@
 export type Role = 'USER' | 'ORG_ADMIN' | 'SUPER_ADMIN';
 
 export interface AuthUser {
+  id: number;
   firstName: string;
   lastName: string;
   role: Role;

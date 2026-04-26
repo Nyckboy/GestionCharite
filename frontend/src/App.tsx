@@ -3,7 +3,6 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 // import OrgDash from './pages/org/OrgDash';
 import ProtectedRoute from './components/ProtectedRoute';
-import SuperAdminDash from './pages/admin/SuperAdminDash';
 
 import OrgLayout from './pages/org/OrgLayout';
 import OrgList from './pages/org/OrgList';
@@ -20,8 +19,9 @@ import AdminOrgApprovals from './pages/admin/AdminOrgApprovals';
 import AdminOverview from './pages/admin/AdminOverview';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminCampaigns from './pages/admin/AdminCampaigns';
-import AdminUsers from './pages/admin/AdminUsers';
-
+import AdminUserList from './pages/admin/AdminUserList';
+import AdminUserCreate from './pages/admin/AdminUserCreate';
+import AdminUserEdit from './pages/admin/AdminUserEdit';
 function App() {
   return (
     <Router>
@@ -58,7 +58,12 @@ function App() {
             <Route path="approvals" element={<AdminOrgApprovals />} />
             {/* Placeholders for future expansion */}
             <Route path="campaigns" element={<AdminCampaigns />} />
-            <Route path="users" element={<AdminUsers />} />
+            {/* 2. Nest the user routes just like we did for organizations */}
+            <Route path="users">
+              <Route index element={<AdminUserList />} />
+              <Route path="new" element={<AdminUserCreate />} />
+              <Route path=":id/edit" element={<AdminUserEdit />} />
+            </Route>
           </Route>
         </Route>
 

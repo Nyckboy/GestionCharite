@@ -17,4 +17,27 @@ public class UserDTOs {
         private String email;
         private String role; // Assuming your Role is an Enum, this will parse to a String
     }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserCreateRequest {
+        private String firstName;
+        private String lastName;
+        private String email;
+        private String password;
+        private String role;
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserUpdateRequest {
+        private String firstName;
+        private String lastName;
+        private String email;
+        private String role;
+    }
 }
