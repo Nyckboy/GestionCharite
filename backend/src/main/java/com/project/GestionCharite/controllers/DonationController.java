@@ -31,6 +31,16 @@ public class DonationController {
                 .body(donationService.makeDonation(request, donorEmail));
     }
 
+    // 🔒 SECURE: Get donation history for the logged-in user
+    @GetMapping("/my-donations")
+    public ResponseEntity<List<DonationResponse>> getMyDonations(Authentication authentication) {
+        
+        // Grab the email securely from the JWT
+        String email = authentication.getName(); 
+        
+        return ResponseEntity.ok(donationService.getMyDonations(email));
+    }
+
     // 🌍 PUBLIC: Anyone can view the list of donations for a specific campaign
     @GetMapping("/action/{actionId}")
     public ResponseEntity<List<DonationResponse>> getDonationsForAction(@PathVariable Long actionId) {

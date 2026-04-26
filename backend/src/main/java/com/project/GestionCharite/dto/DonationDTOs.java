@@ -29,6 +29,7 @@ public class DonationDTOs {
         private Long id;
         private BigDecimal amount;
         private String actionTitle;
+        private Long actionid;
         private String donorName;
         private DonationStatus status;
         private LocalDateTime donationDate;

@@ -63,6 +63,17 @@ public class DonationService {
                 .collect(Collectors.toList());
     }
 
+    // 🔒 SECURE METHOD: Get all donations for the logged-in user
+    public List<DonationResponse> getMyDonations(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return donationRepository.findByDonorId(user.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     private DonationResponse mapToResponse(Donation donation) {
         return DonationResponse.builder()
                 .id(donation.getId())
@@ -71,6 +82,7 @@ public class DonationService {
                 .donorName(donation.getDonor().getFirstName() + " " + donation.getDonor().getLastName())
                 .status(donation.getStatus())
                 .donationDate(donation.getDonationDate()) 
+                .actionid(donation.getAction().getId())
                 .message("Thank you for your generous donation!")
                 .build();
     }
