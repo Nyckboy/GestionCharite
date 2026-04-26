@@ -16,9 +16,27 @@ const PublicLayout = () => {
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-gray-700">Hello, {user?.firstName}</span>
-              {user?.role === 'ORG_ADMIN' && <Link to="/organization" className="text-sm text-blue-600 hover:underline">My Dashboard</Link>}
-              {user?.role === 'SUPER_ADMIN' && <Link to="/admin" className="text-sm text-blue-600 hover:underline">Admin Panel</Link>}
-              <button onClick={logout} className="px-4 py-2 text-sm text-white transition-colors bg-red-600 rounded hover:bg-red-700">Logout</button>
+              
+              {/* Dynamic Dashboard Links Based on Role */}
+              {user?.role === 'USER' && (
+                <Link to="/profile" className="text-sm font-semibold text-blue-600 hover:underline">
+                  My Profile
+                </Link>
+              )}
+              {user?.role === 'ORG_ADMIN' && (
+                <Link to="/organization" className="text-sm font-semibold text-blue-600 hover:underline">
+                  My Dashboard
+                </Link>
+              )}
+              {user?.role === 'SUPER_ADMIN' && (
+                <Link to="/admin" className="text-sm font-semibold text-blue-600 hover:underline">
+                  Admin Panel
+                </Link>
+              )}
+
+              <button onClick={logout} className="px-4 py-2 text-sm text-white transition-colors bg-red-600 rounded hover:bg-red-700">
+                Logout
+              </button>
             </div>
           ) : (
             <>
