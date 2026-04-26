@@ -26,6 +26,7 @@ import UserLayout from './pages/user/UserLayout';
 import UserProfile from './pages/user/UserProfile';
 import UserEditProfile from './pages/user/UserEditProfile';
 import UserDonations from './pages/user/UserDonations';
+import OrgDashboard from './pages/org/OrgDashboard';
 
 function App() {
   return (
@@ -53,7 +54,8 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['ORG_ADMIN']} />}>
           <Route path="/organization" element={<OrgLayout />}>
             {/* Index maps to /organization exactly */}
-            <Route index element={<OrgList />} />
+            <Route index element={<OrgDashboard />} />
+            <Route path="list" element={<OrgList />} />
             <Route path="new" element={<OrgCreate />} />
             <Route path=":id/edit" element={<OrgEdit />} />
             <Route path=":id/campaign/new" element={<CampaignCreate />} />

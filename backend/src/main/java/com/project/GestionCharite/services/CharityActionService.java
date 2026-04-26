@@ -173,6 +173,7 @@ public class CharityActionService {
             .currentAmount(action.getCurrentAmount())
             .category(action.getCategory())
             .organizationName(action.getOrganization().getName())
+            .organizationId(action.getOrganization().getId())
             .location(action.getLocation())
             .build();
   }

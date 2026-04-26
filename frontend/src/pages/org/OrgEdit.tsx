@@ -45,7 +45,7 @@ const OrgEdit = () => {
     setError(null);
     try {
       await apiClient.put(`/organizations/${id}`, orgForm);
-      navigate('/organization'); // Send back to dashboard on success
+      navigate('/organization/list'); // Send back to dashboard on success
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to update organization.');
       setIsSaving(false);
@@ -56,7 +56,7 @@ const OrgEdit = () => {
 
   return (
     <div className="p-8 bg-white rounded-lg shadow-md fade-in">
-      <Link to="/organization" className="mb-6 text-sm text-blue-600 hover:underline">&larr; Back to Dashboard</Link>
+      <Link to="/organization/list" className="mb-6 text-sm text-blue-600 hover:underline">&larr; Back to Dashboard</Link>
       <h2 className="mb-6 text-2xl font-bold text-gray-800">Edit Organization Profile</h2>
       
       {error && <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded">{error}</div>}

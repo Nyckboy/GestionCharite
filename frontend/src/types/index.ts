@@ -75,3 +75,9 @@ export interface PlatformUser {
   email: string;
   role: 'USER' | 'ORG_ADMIN' | 'SUPER_ADMIN';
 }
+
+export interface OrgAdminStats {
+  totalOrganizations: number;
+  totalCampaigns: number;
+  totalRaised: number;
+}

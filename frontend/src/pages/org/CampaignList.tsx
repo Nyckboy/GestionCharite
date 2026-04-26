@@ -48,7 +48,7 @@ const CampaignList = () => {
 
   return (
     <div className="fade-in">
-      <Link to="/organization" className="inline-block mb-6 text-sm text-blue-600 hover:underline">
+      <Link to="/organization/list" className="inline-block mb-6 text-sm text-blue-600 hover:underline">
         &larr; Back to Organizations
       </Link>
       

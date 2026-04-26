@@ -1,6 +1,6 @@
 // src/pages/org/CampaignEdit.tsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { CharityAction, Category } from '../../types';
 
@@ -15,6 +15,9 @@ const CampaignEdit = () => {
   const [campaignForm, setCampaignForm] = useState({
     title: '', description: '', actionDate: '', location: '', targetAmount: '', category: 'EDUCATION' as Category
   });
+
+  const location = useLocation();
+  const cameFromDashboard = location.state?.fromDashboard;
 
   // 1. Fetch the existing data to populate the form
   useEffect(() => {
@@ -63,10 +66,13 @@ const CampaignEdit = () => {
 
   if (isLoading) return <div className="p-8 text-center animate-pulse">Loading campaign data...</div>;
 
+  const backUrl = cameFromDashboard ? '/organization' : `/organization/${orgId}/campaigns`;
+  const backLabel = cameFromDashboard ? 'Back to Dashboard' : 'Back to Campaigns';
+
   return (
     <div className="p-8 bg-white rounded-lg shadow-md fade-in">
-      <Link to={`/organization/${orgId}/campaigns`} className="inline-block mb-6 text-sm text-blue-600 hover:underline">
-        &larr; Back to Campaigns
+      <Link to={backUrl} className="inline-block mb-6 text-sm text-blue-600 hover:underline">
+        &larr; {backLabel}
       </Link>
       <h2 className="mb-6 text-2xl font-bold text-gray-800">Edit Campaign</h2>
       
