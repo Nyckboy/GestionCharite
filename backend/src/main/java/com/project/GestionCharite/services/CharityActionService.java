@@ -175,6 +175,7 @@ public class CharityActionService {
             .organizationName(action.getOrganization().getName())
             .organizationId(action.getOrganization().getId())
             .location(action.getLocation())
+            .mediaUrl(action.getMediaUrl())
             .build();
   }
 }
