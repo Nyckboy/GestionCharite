@@ -126,6 +126,7 @@ public class CharityActionService {
       action.setLocation(request.getLocation());
       action.setTargetAmount(request.getTargetAmount());
       action.setCategory(request.getCategory());
+      action.setMediaUrl(request.getMediaUrl());
       
       CharityAction updatedAction = actionRepository.save(action);
       return mapToResponse(updatedAction);

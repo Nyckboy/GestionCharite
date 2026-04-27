@@ -42,6 +42,7 @@ export interface CharityAction {
   currentAmount: number;
   category: Category;
   organizationId: number;
+  mediaUrl?: string;
 }
 
 export interface Donation {

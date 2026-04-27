@@ -11,6 +11,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\""
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.105.0",
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.15.0",
     "clsx": "^2.1.1",

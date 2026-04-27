@@ -7,7 +7,7 @@ coverage/
 node_modules/
 
 # Static assets
-public/
+./public/
 *.svg
 *.png
 *.jpg
