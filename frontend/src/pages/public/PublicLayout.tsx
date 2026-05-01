@@ -5,56 +5,111 @@ const PublicLayout = () => {
   const { isAuthenticated, user, logout } = useAuth();
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Public Navbar */}
-      <nav className="flex items-center justify-between p-4 bg-white shadow-sm">
-        <Link to="/" className="text-2xl font-bold text-blue-800">
-          Gestion Charité
-        </Link>
-        
-        <div className="flex gap-4">
-          {isAuthenticated ? (
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-gray-700">Hello, {user?.firstName}</span>
-              
-              {/* Dynamic Dashboard Links Based on Role */}
-              {user?.role === 'USER' && (
-                <Link to="/profile" className="text-sm font-semibold text-blue-600 hover:underline">
-                  My Profile
-                </Link>
-              )}
-              {user?.role === 'ORG_ADMIN' && (
-                <Link to="/organization" className="text-sm font-semibold text-blue-600 hover:underline">
-                  My Dashboard
-                </Link>
-              )}
-              {user?.role === 'SUPER_ADMIN' && (
-                <Link to="/admin" className="text-sm font-semibold text-blue-600 hover:underline">
-                  Admin Panel
-                </Link>
-              )}
+    <div className="flex min-h-screen flex-col bg-[#f5faff] font-['Inter',sans-serif] antialiased">
+      {/* TopNavBar */}
+      <header className="fixed top-0 z-50 w-full border-b border-[#dee3e8] bg-white/80 shadow-sm backdrop-blur-md">
+        <div className="mx-auto flex h-16 w-full max-w-360 items-center justify-between px-6">
+          <div className="flex items-center gap-8">
+            <Link to="/" className="text-xl font-bold tracking-tight text-[#002045]">
+              Gestion Charité
+            </Link>
+            <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
+              <Link to="/" className="border-b-2 border-[#002045] pb-1 text-[#002045]">
+                Campaigns
+              </Link>
+              <span className="cursor-not-allowed text-[#43474e] opacity-50">Organizations</span>
+              <span className="cursor-not-allowed text-[#43474e] opacity-50">Impact</span>
+            </nav>
+          </div>
 
-              <button onClick={logout} className="px-4 py-2 text-sm text-white transition-colors bg-red-600 rounded hover:bg-red-700">
-                Logout
-              </button>
+          <div className="flex items-center gap-4">
+            {/* Greyed out Search */}
+            <div className="relative hidden opacity-50 grayscale lg:block">
+              <span className="material-symbols-outlined absolute top-1/2 left-3 -translate-y-1/2 text-lg text-[#74777f]">
+                search
+              </span>
+              <input
+                disabled
+                className="w-64 rounded-full border-none bg-[#eff4f9] py-2 pr-4 pl-10 text-sm"
+                placeholder="Search causes..."
+                type="text"
+              />
             </div>
-          ) : (
-            <>
-              <Link to="/login" className="px-4 py-2 text-sm font-semibold text-blue-600 transition-colors bg-blue-100 rounded hover:bg-blue-200">Log In</Link>
-              <Link to="/register" className="px-4 py-2 text-sm font-semibold text-white transition-colors bg-blue-600 rounded hover:bg-blue-700">Sign Up</Link>
-            </>
-          )}
+
+            {isAuthenticated ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-semibold text-[#171c20]">
+                  Hello, {user?.firstName}
+                </span>
+                {user?.role === 'USER' && (
+                  <Link
+                    to="/profile"
+                    className="text-sm font-semibold text-[#002045] hover:underline"
+                  >
+                    Profile
+                  </Link>
+                )}
+                {user?.role === 'ORG_ADMIN' && (
+                  <Link
+                    to="/organization"
+                    className="text-sm font-semibold text-[#002045] hover:underline"
+                  >
+                    Dashboard
+                  </Link>
+                )}
+                {user?.role === 'SUPER_ADMIN' && (
+                  <Link
+                    to="/admin"
+                    className="text-sm font-semibold text-[#002045] hover:underline"
+                  >
+                    Admin
+                  </Link>
+                )}
+                <button
+                  onClick={logout}
+                  className="rounded-full bg-[#ba1a1a] px-4 py-2 text-sm font-semibold text-white transition-all hover:opacity-90"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/login"
+                  className="rounded-full px-4 py-2 text-sm font-semibold text-[#002045] transition-all hover:bg-[#eff4f9]"
+                >
+                  Log In
+                </Link>
+                <Link
+                  to="/register"
+                  className="rounded-full bg-[#002045] px-6 py-2 text-sm font-semibold text-white transition-all hover:opacity-90"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
-      </nav>
+      </header>
 
       {/* Dynamic Page Content */}
-      <main className="grow">
+      <main className="grow pt-16">
         <Outlet />
       </main>
 
-      {/* Standard Public Footer */}
-      <footer className="py-6 mt-auto text-sm text-center text-gray-400 bg-gray-900">
-        <p>&copy; {new Date().getFullYear()} Gestion Charité. All rights reserved.</p>
+      {/* Institutional Footer */}
+      <footer className="mt-auto border-t border-[#dee3e8] bg-white">
+        <div className="mx-auto flex max-w-360 flex-col items-center justify-between gap-4 px-8 py-8 md:flex-row">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-[#002045]">Gestion Charité</span>
+            <span className="text-xs text-[#74777f]">© 2026 Built for impact.</span>
+          </div>
+          <nav className="flex gap-6 text-xs font-medium text-[#43474e]">
+            <span className="cursor-not-allowed opacity-50">Privacy Policy</span>
+            <span className="cursor-not-allowed opacity-50">Terms of Service</span>
+            <span className="cursor-not-allowed opacity-50">Contact</span>
+          </nav>
+        </div>
       </footer>
     </div>
   );
