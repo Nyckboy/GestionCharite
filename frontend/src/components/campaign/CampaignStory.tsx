@@ -9,16 +9,12 @@ const CampaignStory: React.FC<CampaignStoryProps> = ({ campaign }) => {
   return (
     <div className="space-y-8 lg:col-span-2">
       {/* Main Image Placeholder */}
-      <div className="h-80 w-full overflow-hidden rounded-xl bg-gray-100">
+      <div className="aspect-video overflow-hidden rounded-2xl bg-[#dee3e8] shadow-sm">
         {campaign.mediaUrl ? (
-          <img
-            src={campaign.mediaUrl}
-            alt={campaign.title}
-            className="h-full w-full object-cover"
-          />
+          <img src={campaign.mediaUrl} alt="Campaign" className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gray-200 text-gray-400">
-            No Campaign Image Available
+          <div className="flex h-full w-full items-center justify-center text-[#74777f] italic">
+            No Media Available
           </div>
         )}
       </div>
@@ -43,8 +39,8 @@ const CampaignStory: React.FC<CampaignStoryProps> = ({ campaign }) => {
       <div>
         <h2 className="mb-4 border-b pb-2 text-2xl font-bold">The Story</h2>
         <div className="space-y-4 leading-relaxed text-gray-700">
-          {campaign.longStory ? (
-            <p>{campaign.longStory}</p>
+          {campaign.description ? (
+            <p>{campaign.description}</p>
           ) : (
             <>
               <p>
@@ -66,8 +62,8 @@ const CampaignStory: React.FC<CampaignStoryProps> = ({ campaign }) => {
         {campaign.updates && campaign.updates.length > 0 ? (
           <div className="space-y-4">
             {campaign.updates.map((update, i) => (
-              <div key={i} className="border-l-2 border-blue-500 pl-4">
-                <p className="text-xs text-gray-500">{update.date}</p>
+              <div key={i} className="border-l-2 border-blue-500 pl-4 rounded bg-gray-50 p-4 text-sm text-gray-500 italic">
+                <p className="text-xs font-bold text-[#74777f]">{update.date}</p>
                 <p className="text-gray-700">{update.message}</p>
               </div>
             ))}

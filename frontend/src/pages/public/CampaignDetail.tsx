@@ -11,52 +11,73 @@ const CampaignDetail = () => {
   const [recentDonations, setRecentDonations] = useState<Donation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchCampaignData = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const campaignRes = await apiClient.get<CharityAction>(`/actions/${actionId}`);
-      setCampaign(campaignRes.data);
-
-      const donationsRes = await apiClient.get<Donation[]>(`/donations/action/${actionId}`);
-      setRecentDonations(donationsRes.data);
+      const [campRes, donRes] = await Promise.all([
+        apiClient.get<CharityAction>(`/actions/${actionId}`),
+        apiClient.get<Donation[]>(`/donations/action/${actionId}`),
+      ]);
+      setCampaign(campRes.data);
+      setRecentDonations(donRes.data);
     } catch (error) {
-      console.error("Failed to fetch campaign details", error);
+      console.error('Fetch failed', error);
     } finally {
       setIsLoading(false);
     }
   }, [actionId]);
 
   useEffect(() => {
-    if (actionId) {
-      fetchCampaignData();
-    }
-  }, [actionId, fetchCampaignData]);
+    if (actionId) fetchData();
+  }, [actionId, fetchData]);
 
-  if (isLoading) return <div className="p-20 text-center text-gray-500 animate-pulse">Loading campaign details...</div>;
-  if (!campaign) return <div className="p-20 text-center text-red-500">Campaign not found.</div>;
+  if (isLoading)
+    return (
+      <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
+        Verifying Registry...
+      </div>
+    );
+  if (!campaign) return <div className="py-24 text-center text-[#ba1a1a]">Campaign not found.</div>;
 
   return (
-    <div className="max-w-6xl p-8 mx-auto mt-4 fade-in">
-      <Link to="/" className="inline-block mb-6 text-sm text-blue-600 hover:underline">&larr; Back to Public Feed</Link>
+    <main className="mx-auto max-w-360 px-6 pt-24 pb-16 font-['Inter',sans-serif] lg:px-8">
+      {/* Header Area */}
+      <header className="mb-10">
+        <Link
+          to="/"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[#002045] hover:underline"
+        >
+          <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to Feed
+        </Link>
+        <div className="flex flex-col gap-3">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full bg-[#006d3c]/10 px-3 py-1">
+            <span
+              className="material-symbols-outlined text-[18px] text-[#006d3c]"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              verified
+            </span>
+            <span className="text-[10px] font-bold tracking-widest text-[#006d3c] uppercase">
+              Verified {campaign.category}
+            </span>
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight text-[#002045]">{campaign.title}</h1>
+        </div>
+      </header>
 
-      {/* Header Section */}
-      <div className="mb-8">
-        <span className="inline-block px-3 py-1 mb-4 text-xs font-bold text-blue-800 uppercase bg-blue-100 rounded-full">
-          {campaign.category}
-        </span>
-        <h1 className="mb-4 text-4xl font-extrabold text-gray-900">{campaign.title}</h1>
-        <p className="text-lg text-gray-600">{campaign.description}</p>
+      {/* Grid: Story (8 cols) & Widget (4 cols) */}
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        <div className="lg:col-span-8">
+          <CampaignStory campaign={campaign} />
+        </div>
+        <div className="lg:col-span-4">
+          <DonationWidget
+            campaign={campaign}
+            recentDonations={recentDonations}
+            onDonationSuccess={fetchData}
+          />
+        </div>
       </div>
-
-      <div className="grid gap-12 lg:grid-cols-3">
-        {/* Child Components handle their own UI logic now */}
-        <CampaignStory campaign={campaign} />
-        <DonationWidget 
-          campaign={campaign} 
-          recentDonations={recentDonations} 
-          onDonationSuccess={fetchCampaignData} 
-        />
-      </div>
-    </div>
+    </main>
   );
 };
 
