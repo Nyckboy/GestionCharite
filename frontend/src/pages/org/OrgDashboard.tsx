@@ -13,12 +13,12 @@ const OrgDashboard = () => {
       try {
         const [statsRes, campaignsRes] = await Promise.all([
           apiClient.get<OrgAdminStats>('/organizations/me/stats'),
-          apiClient.get<CharityAction[]>('/actions/me/all')
+          apiClient.get<CharityAction[]>('/actions/me/all'),
         ]);
         setStats(statsRes.data);
         setCampaigns(campaignsRes.data);
       } catch (error) {
-        console.error("Failed to load dashboard data", error);
+        console.error('Failed to load dashboard data', error);
       } finally {
         setIsLoading(false);
       }
@@ -28,89 +28,236 @@ const OrgDashboard = () => {
   }, []);
 
   if (isLoading) {
-    return <div className="p-8 text-center text-gray-500 animate-pulse">Loading dashboard...</div>;
+    return (
+      <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
+        Compiling organizational metrics...
+      </div>
+    );
   }
 
   const displayStats = stats || { totalOrganizations: 0, totalCampaigns: 0, totalRaised: 0 };
 
   return (
-    <div className="fade-in">
-      <h2 className="mb-6 text-3xl font-bold text-gray-800">Overview</h2>
+    <div className="space-y-8 font-['Inter',sans-serif]">
+      {/* Header & CTA Section */}
+      <div className="mb-2 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-[#002045]">Campaign Management</h1>
+          <p className="mt-1 text-sm font-medium text-[#74777f]">
+            Track, manage, and optimize your global impact initiatives.
+          </p>
+        </div>
+        <Link
+          to="/organization/list"
+          className="flex items-center gap-2 rounded-xl bg-[#002045] px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#1a365d] active:scale-95"
+        >
+          <span className="material-symbols-outlined text-[20px]">account_balance</span>
+          Manage Organizations
+        </Link>
+      </div>
 
-      {/* High-Level Stats Cards */}
-      <div className="grid gap-6 mb-8 md:grid-cols-3">
-        <div className="p-6 bg-white border-l-4 border-green-500 rounded-lg shadow-sm">
-          <p className="text-sm font-medium text-gray-500 uppercase">Total Raised</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">{displayStats.totalRaised} MAD</p>
+      {/* Metrics Overview */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* Metric 1 */}
+        <div className="rounded-xl border border-[#dee3e8] bg-white p-6 shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
+              Total Raised
+            </span>
+            <div className="rounded-lg bg-[#d6e3ff] p-2 text-[#004881]">
+              <span className="material-symbols-outlined text-lg">payments</span>
+            </div>
+          </div>
+          <div className="text-3xl font-bold text-[#002045]">
+            {displayStats.totalRaised.toLocaleString()}{' '}
+            <span className="text-lg text-[#74777f]">MAD</span>
+          </div>
+          <div className="mt-3 flex items-center gap-1 text-xs font-bold text-[#006d3c]">
+            <span className="material-symbols-outlined text-[14px]">trending_up</span> Active
+            tracking
+          </div>
         </div>
-        <div className="p-6 bg-white border-l-4 border-blue-500 rounded-lg shadow-sm">
-          <p className="text-sm font-medium text-gray-500 uppercase">My Campaigns</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">{displayStats.totalCampaigns}</p>
+
+        {/* Metric 2 */}
+        <div className="rounded-xl border border-[#dee3e8] bg-white p-6 shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
+              My Campaigns
+            </span>
+            <div className="rounded-lg bg-[#85f6ad]/20 p-2 text-[#006d3c]">
+              <span className="material-symbols-outlined text-lg">rocket_launch</span>
+            </div>
+          </div>
+          <div className="text-3xl font-bold text-[#002045]">{displayStats.totalCampaigns}</div>
+          <div className="mt-3 flex items-center gap-1 text-xs font-bold text-[#74777f]">
+            <span className="material-symbols-outlined text-[14px]">schedule</span> Ongoing missions
+          </div>
         </div>
-        <div className="p-6 bg-white border-l-4 border-purple-500 rounded-lg shadow-sm">
-          <p className="text-sm font-medium text-gray-500 uppercase">Registered Charities</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">{displayStats.totalOrganizations}</p>
+
+        {/* Metric 3 */}
+        <div className="rounded-xl border border-[#dee3e8] bg-white p-6 shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
+              Registered Charities
+            </span>
+            <div className="rounded-lg bg-[#e4e9ee] p-2 text-[#171c20]">
+              <span className="material-symbols-outlined text-lg">account_balance</span>
+            </div>
+          </div>
+          <div className="text-3xl font-bold text-[#002045]">{displayStats.totalOrganizations}</div>
+          <div className="mt-3 flex items-center gap-1 text-xs font-bold text-[#74777f]">
+            <span className="material-symbols-outlined text-[14px]">verified</span> Verified
+            entities
+          </div>
         </div>
       </div>
 
-      {/* Master Campaign List */}
-      <div className="overflow-hidden bg-white border border-gray-100 rounded-lg shadow-sm">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h3 className="text-lg font-bold text-gray-800">Recent Campaigns</h3>
-          <Link to="/organization/list" className="text-sm font-semibold text-blue-600 hover:underline">
-            Manage Organizations &rarr;
-          </Link>
-        </div>
-        
-        {campaigns.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            You haven't launched any campaigns yet. Go to your organizations to create one!
+      {/* Two Column Layout: Campaigns & Creation Form */}
+      <div className="grid grid-cols-1 items-start gap-8 xl:grid-cols-3">
+        {/* Left Col: Campaign List (Bento Grid) */}
+        <div className="space-y-4 xl:col-span-2">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-[#002045]">Active Campaigns</h3>
           </div>
-        ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="p-4 text-sm font-semibold text-gray-700">Campaign Title</th>
-                <th className="p-4 text-sm font-semibold text-gray-700">Category</th>
-                <th className="p-4 text-sm font-semibold text-gray-700">Progress</th>
-                <th className="p-4 text-sm font-semibold text-center text-gray-700">Action</th>
-              </tr>
-            </thead>
-            <tbody>
+
+          {campaigns.length === 0 ? (
+            <div className="rounded-xl border border-[#dee3e8] bg-white p-12 text-center shadow-sm">
+              <span className="material-symbols-outlined mb-4 text-4xl text-[#c4c6cf]">
+                campaign
+              </span>
+              <p className="mb-1 font-bold text-[#171c20]">No campaigns active.</p>
+              <p className="text-sm text-[#74777f]">
+                Create an organization to launch your first initiative.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {campaigns.map((campaign) => {
-                const progress = Math.min((campaign.currentAmount / campaign.targetAmount) * 100, 100).toFixed(0);
+                const progress = Math.min(
+                  (campaign.currentAmount / campaign.targetAmount) * 100,
+                  100,
+                );
                 return (
-                  <tr key={campaign.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="p-4 font-medium text-gray-800 max-w-50 truncate">{campaign.title}</td>
-                    <td className="p-4 text-sm text-gray-600">
-                      <span className="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded">
-                        {campaign.category}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 h-2 bg-gray-200 rounded-full">
-                          <div className="h-2 bg-green-500 rounded-full" style={{ width: `${progress}%` }}></div>
+                  <div
+                    key={campaign.id}
+                    className="flex flex-col overflow-hidden rounded-xl border border-[#dee3e8] bg-white shadow-sm"
+                  >
+                    <div className="relative h-40 bg-[#eff4f9]">
+                      {campaign.mediaUrl ? (
+                        <img
+                          src={campaign.mediaUrl}
+                          alt={campaign.title}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-xs font-bold tracking-widest text-[#74777f] uppercase">
+                          No Media
                         </div>
-                        <span className="text-xs font-bold text-gray-600">{progress}%</span>
+                      )}
+                      <div className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold tracking-wider text-[#006d3c] uppercase shadow-sm backdrop-blur">
+                        {campaign.category}
                       </div>
-                      <div className="mt-1 text-xs text-gray-500">{campaign.currentAmount} / {campaign.targetAmount} MAD</div>
-                    </td>
-                    <td className="p-4 text-center">
-                      <Link 
-                        to={`/organization/${campaign.organizationId}/campaign/${campaign.id}/edit`}
-                        state={{ fromDashboard: true }}
-                        className="px-3 py-1 text-xs font-semibold text-gray-700 transition-colors bg-gray-100 rounded hover:bg-gray-200"
-                      >
-                        Edit Details
-                      </Link>
-                    </td>
-                  </tr>
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h4 className="mb-1 line-clamp-1 text-lg font-bold text-[#002045]">
+                        {campaign.title}
+                      </h4>
+                      <p className="mb-4 line-clamp-2 flex-1 text-sm text-[#74777f]">
+                        {campaign.description}
+                      </p>
+
+                      <div className="mt-auto space-y-3">
+                        <div className="flex justify-between text-xs font-bold">
+                          <span className="text-[#43474e]">Raised: {campaign.currentAmount}</span>
+                          <span className="text-[#002045]">{progress.toFixed(0)}%</span>
+                        </div>
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-[#eff4f9]">
+                          <div
+                            className="h-full rounded-full bg-[#48bb78] transition-all duration-700"
+                            style={{ width: `${progress}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-xs font-bold text-[#74777f]">
+                            Target: {campaign.targetAmount} MAD
+                          </span>
+                          <Link
+                            to={`/organization/${campaign.organizationId}/campaign/${campaign.id}/edit`}
+                            className="flex items-center gap-1 rounded-lg bg-[#eff4f9] px-3 py-1.5 text-xs font-bold text-[#002045] transition-colors hover:bg-[#d6e3ff]"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">edit</span>
+                            Edit
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
-        )}
+            </div>
+          )}
+        </div>
+
+        {/* Right Col: Placeholder Creation Form (Greyed out per rule) */}
+        <div className="pointer-events-none opacity-50 grayscale select-none xl:col-span-1">
+          <div className="sticky top-24 rounded-xl border border-[#dee3e8] bg-white p-6 shadow-sm">
+            <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-[#002045]">
+              <span className="material-symbols-outlined text-[#002045]">add_box</span>
+              Quick Draft
+            </h3>
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
+                  Campaign Title
+                </label>
+                <input
+                  disabled
+                  className="w-full rounded-lg border-0 bg-[#eff4f9] px-4 py-3 text-sm font-medium"
+                  placeholder="e.g. Winter Relief Fund"
+                  type="text"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
+                  Category
+                </label>
+                <select
+                  disabled
+                  className="w-full appearance-none rounded-lg border-0 bg-[#eff4f9] px-4 py-3 text-sm font-medium"
+                >
+                  <option>Healthcare</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
+                  Target Amount
+                </label>
+                <div className="relative">
+                  <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold text-[#74777f]">
+                    MAD
+                  </span>
+                  <input
+                    disabled
+                    className="w-full rounded-lg border-0 bg-[#eff4f9] py-3 pr-4 pl-12 text-sm font-medium"
+                    placeholder="50000"
+                    type="number"
+                  />
+                </div>
+              </div>
+              <div className="pt-4">
+                <button
+                  disabled
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 text-sm font-bold text-white"
+                >
+                  <span className="material-symbols-outlined">publish</span> Publish Campaign
+                </button>
+                <p className="mt-4 text-center text-xs font-semibold text-[#74777f]">
+                  Drafts sync automatically.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

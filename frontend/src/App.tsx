@@ -24,7 +24,6 @@ import AdminUserCreate from './pages/admin/AdminUserCreate';
 import AdminUserEdit from './pages/admin/AdminUserEdit';
 import UserLayout from './pages/user/UserLayout';
 import UserProfile from './pages/user/UserProfile';
-import UserEditProfile from './pages/user/UserEditProfile';
 import UserDonations from './pages/user/UserDonations';
 import OrgDashboard from './pages/org/OrgDashboard';
 
@@ -45,7 +44,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['USER']} />}>
           <Route path="/profile" element={<UserLayout />}>
             <Route index element={<UserProfile />} />
-            <Route path="edit" element={<UserEditProfile />} />
+            {/* <Route path="edit" element={<UserEditProfile />} /> */}
             <Route path="donations" element={<UserDonations />} />
           </Route>
         </Route>

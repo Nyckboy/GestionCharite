@@ -30,14 +30,6 @@ const UserLayout = () => {
           </Link>
 
           <Link
-            to="/profile/edit"
-            className={`flex items-center rounded-lg px-3 py-3 transition-all ${isActive('/profile/edit') ? 'border-r-4 border-[#002045] bg-[#eff4f9] font-bold text-[#002045]' : 'font-semibold text-[#43474e] hover:bg-[#f5faff] hover:text-[#002045]'}`}
-          >
-            <span className="material-symbols-outlined mr-3 text-[20px]">edit_document</span>
-            Edit Details
-          </Link>
-
-          <Link
             to="/profile/donations"
             className={`flex items-center rounded-lg px-3 py-3 transition-all ${isActive('/profile/donations') ? 'border-r-4 border-[#002045] bg-[#eff4f9] font-bold text-[#002045]' : 'font-semibold text-[#43474e] hover:bg-[#f5faff] hover:text-[#002045]'}`}
           >
