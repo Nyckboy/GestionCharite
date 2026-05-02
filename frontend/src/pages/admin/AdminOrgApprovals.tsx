@@ -17,8 +17,9 @@ const AdminOrgApprovals = () => {
       const response = await apiClient.get<Organization[]>('/admin/organizations/pending');
       setPendingOrgs(response.data);
     } catch (error) {
-      console.error("Failed to fetch pending organizations", error);
-      setActionError("Could not load pending organizations. Ensure you have Super Admin privileges.");
+      setActionError(
+        'Could not load pending organizations. Ensure you have Super Admin privileges.',
+      );
     } finally {
       setIsLoading(false);
     }
@@ -28,64 +29,94 @@ const AdminOrgApprovals = () => {
     setActionError(null);
     try {
       await apiClient.patch(`/admin/organizations/${id}/validate`);
-      setPendingOrgs(prev => prev.filter(org => org.id !== id));
+      setPendingOrgs((prev) => prev.filter((org) => org.id !== id));
     } catch (error: any) {
       setActionError(error.response?.data?.message || 'Failed to approve organization.');
     }
   };
 
   return (
-    <div className="fade-in">
-      <h2 className="mb-2 text-2xl font-bold text-gray-800">Pending Approvals</h2>
-      <p className="mb-6 text-gray-600">Review and validate new charity organizations to allow them to raise funds.</p>
+    <div className="space-y-8 font-['Inter',sans-serif]">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight text-[#002045]">Pending Approvals</h2>
+        <p className="mt-1 text-sm font-medium text-[#74777f]">
+          Review and validate new charity organizations to authorize fundraising.
+        </p>
+      </div>
 
       {actionError && (
-        <div className="p-4 mb-6 text-red-800 bg-red-100 rounded">
-          {actionError}
+        <div className="flex items-center gap-2 rounded-lg bg-[#ffdad6] p-4 text-sm font-bold text-[#ba1a1a]">
+          <span className="material-symbols-outlined">error</span> {actionError}
         </div>
       )}
 
-      <div className="overflow-hidden bg-white border border-gray-100 rounded-lg shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
         {isLoading ? (
-          <div className="p-8 text-center text-gray-500 animate-pulse">
-            Loading pending organizations...
+          <div className="animate-pulse p-16 text-center font-bold text-[#43474e]">
+            Loading registry queue...
           </div>
         ) : pendingOrgs.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            No organizations are currently pending approval.
+          <div className="flex flex-col items-center justify-center bg-[#f5faff] p-16 text-center">
+            <span className="material-symbols-outlined mb-4 text-5xl text-[#c4c6cf]">task_alt</span>
+            <p className="mb-1 text-lg font-bold text-[#002045]">Queue is empty.</p>
+            <p className="text-sm font-medium text-[#74777f]">
+              No organizations are currently pending approval.
+            </p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="p-4 text-sm font-semibold text-gray-700">Organization Name</th>
-                <th className="p-4 text-sm font-semibold text-gray-700">Tax ID</th>
-                <th className="p-4 text-sm font-semibold text-gray-700">Primary Contact</th>
-                <th className="p-4 text-sm font-semibold text-gray-700">Description</th>
-                <th className="p-4 text-sm font-semibold text-center text-gray-700">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pendingOrgs.map((org) => (
-                <tr key={org.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="p-4 font-medium text-gray-800">{org.name}</td>
-                  <td className="p-4 text-sm text-gray-600">{org.taxIdentificationNumber}</td>
-                  <td className="p-4 text-sm text-gray-600">{org.primaryContact}</td>
-                  <td className="p-4 text-sm text-gray-500 max-w-xs truncate" title={org.description}>
-                    {org.description}
-                  </td>
-                  <td className="p-4 text-center">
-                    <button 
-                      onClick={() => handleApprove(org.id)}
-                      className="px-4 py-2 text-sm font-semibold text-white transition-colors bg-green-600 rounded shadow-sm hover:bg-green-700"
-                    >
-                      Approve
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[800px] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-[#dee3e8] bg-[#eff4f9]">
+                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-[#43474e] uppercase">
+                    Organization Details
+                  </th>
+                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-[#43474e] uppercase">
+                    Tax ID
+                  </th>
+                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-[#43474e] uppercase">
+                    Primary Contact
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-bold tracking-wider text-[#43474e] uppercase">
+                    Action
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[#dee3e8]">
+                {pendingOrgs.map((org) => (
+                  <tr key={org.id} className="transition-colors hover:bg-[#f5faff]">
+                    <td className="px-6 py-5">
+                      <p className="text-base font-bold text-[#002045]">{org.name}</p>
+                      <p
+                        className="mt-1 max-w-sm truncate text-xs font-semibold text-[#74777f]"
+                        title={org.description}
+                      >
+                        {org.description}
+                      </p>
+                    </td>
+                    <td className="px-6 py-5 text-sm font-bold text-[#171c20]">
+                      {org.taxIdentificationNumber}
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#e4e9ee] px-3 py-1 text-xs font-bold text-[#171c20]">
+                        <span className="material-symbols-outlined text-[14px]">mail</span>{' '}
+                        {org.primaryContact}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <button
+                        onClick={() => handleApprove(org.id)}
+                        className="inline-flex items-center gap-2 rounded-xl bg-[#48bb78] px-6 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#38a169] hover:shadow-md active:scale-95"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">verified</span>{' '}
+                        Validate
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
