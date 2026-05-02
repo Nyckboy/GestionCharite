@@ -6,13 +6,16 @@ import type { PlatformUser } from '../../types';
 const AdminUserEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '', role: 'USER' as PlatformUser['role']
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: 'USER' as PlatformUser['role'],
   });
 
   useEffect(() => {
@@ -23,10 +26,10 @@ const AdminUserEdit = () => {
           firstName: response.data.firstName,
           lastName: response.data.lastName,
           email: response.data.email,
-          role: response.data.role
+          role: response.data.role,
         });
       } catch (err: any) {
-        setError("Failed to load user details.");
+        setError(err.response?.data || 'Failed to load user details.');
       } finally {
         setIsLoading(false);
       }
@@ -48,45 +51,111 @@ const AdminUserEdit = () => {
     }
   };
 
-  if (isLoading) return <div className="p-8 text-center animate-pulse">Loading user data...</div>;
+  if (isLoading) {
+    return (
+      <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
+        Retrieving user profile...
+      </div>
+    );
+  }
 
   return (
-    <div className="p-8 bg-white rounded-lg shadow-md fade-in max-w-2xl mx-auto">
-      <Link to="/admin/users" className="mb-6 text-sm text-blue-600 hover:underline block">&larr; Back to Users</Link>
-      <h2 className="mb-6 text-2xl font-bold text-gray-800">Edit User Details</h2>
-      
-      {error && <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded">{error}</div>}
+    <div className="mx-auto max-w-3xl space-y-6 font-['Inter',sans-serif]">
+      <Link
+        to="/admin/users"
+        className="inline-flex items-center gap-2 text-sm font-bold text-[#002045] hover:underline"
+      >
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to Directory
+      </Link>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex gap-4">
-          <div className="w-1/2">
-            <label className="block mb-1 text-sm font-semibold text-gray-700">First Name</label>
-            <input type="text" required value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" />
+      <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
+        <div className="flex items-center gap-3 border-b border-[#dee3e8] bg-[#f5faff]/50 px-8 py-6">
+          <span className="material-symbols-outlined text-2xl text-[#002045]">manage_accounts</span>
+          <div>
+            <h2 className="text-2xl font-bold text-[#002045]">Edit Account Details</h2>
+            <p className="mt-1 text-sm font-medium text-[#74777f]">
+              Modify user information and system access levels.
+            </p>
           </div>
-          <div className="w-1/2">
-            <label className="block mb-1 text-sm font-semibold text-gray-700">Last Name</label>
-            <input type="text" required value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" />
-          </div>
-        </div>
-        
-        <div>
-          <label className="block mb-1 text-sm font-semibold text-gray-700">Email Address</label>
-          <input type="email" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" />
-        </div>
-        
-        <div>
-          <label className="block mb-1 text-sm font-semibold text-gray-700">System Role</label>
-          <select value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value as PlatformUser['role']})} className="w-full p-2 bg-white border rounded focus:ring-2 focus:ring-blue-500">
-            <option value="USER">Standard User</option>
-            <option value="ORG_ADMIN">Organization Admin</option>
-            <option value="SUPER_ADMIN">Super Admin</option>
-          </select>
         </div>
 
-        <button type="submit" disabled={isSaving} className="w-full p-3 mt-4 font-semibold text-white transition-colors bg-blue-600 rounded hover:bg-blue-700 disabled:bg-blue-300">
-          {isSaving ? 'Saving...' : 'Save Changes'}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} className="space-y-6 p-8">
+          {error && (
+            <div className="flex items-center gap-2 rounded-lg bg-[#ffdad6] p-4 text-sm font-bold text-[#ba1a1a]">
+              <span className="material-symbols-outlined">error</span> {error}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
+                First Name
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                className="w-full rounded-lg border-none bg-[#eff4f9] px-4 py-3 text-sm font-medium text-[#171c20] outline-none focus:ring-2 focus:ring-[#002045]"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
+                Last Name
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                className="w-full rounded-lg border-none bg-[#eff4f9] px-4 py-3 text-sm font-medium text-[#171c20] outline-none focus:ring-2 focus:ring-[#002045]"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
+                Email Address
+              </label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full rounded-lg border-none bg-[#eff4f9] px-4 py-3 text-sm font-medium text-[#171c20] outline-none focus:ring-2 focus:ring-[#002045]"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
+                System Role
+              </label>
+              <select
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value as PlatformUser['role'] })
+                }
+                className="w-full appearance-none rounded-lg border-none bg-[#eff4f9] px-4 py-3 text-sm font-medium text-[#171c20] outline-none focus:ring-2 focus:ring-[#002045]"
+              >
+                <option value="USER">Standard User</option>
+                <option value="ORG_ADMIN">Organization Admin</option>
+                <option value="SUPER_ADMIN">Super Admin</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="border-t border-[#dee3e8] pt-6">
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 font-bold text-white transition-all hover:bg-[#1a365d] active:scale-[0.99] disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined text-[20px]">save</span>
+              {isSaving ? 'Applying Changes...' : 'Save Configuration'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
