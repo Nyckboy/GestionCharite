@@ -5,9 +5,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.GestionCharite.dto.PageResponse;
+import com.project.GestionCharite.dto.UserDTOs.UserResponse;
 import com.project.GestionCharite.dto.CharityDTOs.ActionRequest;
 import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
 import com.project.GestionCharite.dto.CharityDTOs.UpdateRequest;
@@ -25,59 +30,79 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CharityActionService {
-  private final CharityActionRepository actionRepository;
-  private final OrganizationRepository organizationRepository;
-  private final UserRepository userRepository;
+    private final CharityActionRepository actionRepository;
+    private final OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
 
 
-  @Transactional
-  public ActionResponse createAction(ActionRequest request, String loggedInUserEmail) {
-    Organization org = organizationRepository.findById(request.getOrganizationId()).orElseThrow(() -> new RuntimeException("Organization not found"));
+    @Transactional
+    public ActionResponse createAction(ActionRequest request, String loggedInUserEmail) {
+        Organization org = organizationRepository.findById(request.getOrganizationId()).orElseThrow(() -> new RuntimeException("Organization not found"));
 
-    // Business Rule: Only validated organizations can create actions
-    if (!org.isValidated()) {
-      throw new IllegalStateException("Organization must be validated by a super-admin to create actions.");
+        // Business Rule: Only validated organizations can create actions
+        if (!org.isValidated()) {
+        throw new IllegalStateException("Organization must be validated by a super-admin to create actions.");
+        }
+
+        // THE OWNERSHIP CHECK: Are you actually the manager of this org?
+        if (!org.getManager().getEmail().equals(loggedInUserEmail)) {
+            throw new RuntimeException("Stop right there! You do not own this organization.");
+        }
+
+        CharityAction action = CharityAction.builder()
+                                .title(request.getTitle())
+                                .description(request.getDescription())
+                                .actionDate(request.getActionDate())
+                                .location(request.getLocation())
+                                .targetAmount(request.getTargetAmount())
+                                .category(request.getCategory())
+                                .mediaUrl(request.getMediaUrl())
+                                .organization(org)
+                                .build();
+
+        CharityAction savedAction = actionRepository.save(action);
+        return mapToResponse(savedAction);
     }
 
-    // THE OWNERSHIP CHECK: Are you actually the manager of this org?
-    if (!org.getManager().getEmail().equals(loggedInUserEmail)) {
-        throw new RuntimeException("Stop right there! You do not own this organization.");
+    // 🌍 PUBLIC METHOD: Fetch all actions for a specific organization
+    public List<ActionResponse> getActionsByOrganization(Long organizationId) {
+            return actionRepository.findByOrganizationId(organizationId)
+                    .stream()
+                    .map(this::mapToResponse)
+                    .collect(Collectors.toList());
     }
 
-    CharityAction action = CharityAction.builder()
-                            .title(request.getTitle())
-                            .description(request.getDescription())
-                            .actionDate(request.getActionDate())
-                            .location(request.getLocation())
-                            .targetAmount(request.getTargetAmount())
-                            .category(request.getCategory())
-                            .mediaUrl(request.getMediaUrl())
-                            .organization(org)
-                            .build();
+    public PageResponse<ActionResponse> getActionsByCategory(ActionCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CharityAction> actionPage = actionRepository.findByCategory(category, pageable);
+        List<ActionResponse> content = actionPage.getContent().stream()
+                                        .map(this::mapToResponse)
+                                        .toList();
+        return PageResponse.<ActionResponse>builder()
+                .content(content)
+                .pageNumber(actionPage.getNumber())
+                .pageSize(actionPage.getSize())
+                .totalElements(actionPage.getTotalElements())
+                .totalPages(actionPage.getTotalPages())
+                .isLast(actionPage.isLast())
+                .build();
+    }
 
-    CharityAction savedAction = actionRepository.save(action);
-    return mapToResponse(savedAction);
-  }
-  
-  public List<ActionResponse> getActionsByCategory(ActionCategory category) {
-    return actionRepository.findByCategory(category).stream()
-            .map(this::mapToResponse)
-            .collect(Collectors.toList());
-  }
-
-  // 🌍 PUBLIC METHOD: Fetch all actions for a specific organization
-  public List<ActionResponse> getActionsByOrganization(Long organizationId) {
-        return actionRepository.findByOrganizationId(organizationId)
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-  }
   // 🌍 PUBLIC METHOD: Fetch absolutely all campaigns for the homepage
-  public List<ActionResponse> getAllActions() {
-        return actionRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public PageResponse<ActionResponse> getAllActions(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CharityAction> actionPage = actionRepository.findAll(pageable);
+        List<ActionResponse> content = actionPage.getContent().stream()
+                                        .map(this::mapToResponse)
+                                        .toList();
+        return PageResponse.<ActionResponse>builder()
+                .content(content)
+                .pageNumber(actionPage.getNumber())
+                .pageSize(actionPage.getSize())
+                .totalElements(actionPage.getTotalElements())
+                .totalPages(actionPage.getTotalPages())
+                .isLast(actionPage.isLast())
+                .build();
   }
   // 🌍 PUBLIC METHOD: Fetch a single action's details by ID
   public ActionResponse getActionById(Long id) {
