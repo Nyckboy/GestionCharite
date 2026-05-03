@@ -1,5 +1,6 @@
 package com.project.GestionCharite.controllers;
 
+import com.project.GestionCharite.dto.PageResponse;
 import com.project.GestionCharite.dto.DonationDTOs.DonationRequest;
 import com.project.GestionCharite.dto.DonationDTOs.DonationResponse;
 import com.project.GestionCharite.services.DonationService;
@@ -33,12 +34,16 @@ public class DonationController {
 
     // 🔒 SECURE: Get donation history for the logged-in user
     @GetMapping("/my-donations")
-    public ResponseEntity<List<DonationResponse>> getMyDonations(Authentication authentication) {
+    public ResponseEntity<PageResponse<DonationResponse>> getMyDonations(
+        Authentication authentication,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
         
         // Grab the email securely from the JWT
         String email = authentication.getName(); 
         
-        return ResponseEntity.ok(donationService.getMyDonations(email));
+        return ResponseEntity.ok(donationService.getMyDonations(email, page, size));
     }
 
     // 🌍 PUBLIC: Anyone can view the list of donations for a specific campaign
