@@ -82,3 +82,15 @@ export interface OrgAdminStats {
   totalCampaigns: number;
   totalRaised: number;
 }
+
+export interface PageResponse<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  size: number;     // Spring's default for pageSize
+  number: number;   // Spring's default for pageNumber
+  last: boolean;    // Spring's default for isLast
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}

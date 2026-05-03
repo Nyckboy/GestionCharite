@@ -6,6 +6,7 @@ import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
 import com.project.GestionCharite.dto.UserDTOs.UserCreateRequest;
 import com.project.GestionCharite.dto.UserDTOs.UserResponse;
 import com.project.GestionCharite.dto.UserDTOs.UserUpdateRequest;
+import com.project.GestionCharite.models.CharityAction;
 import com.project.GestionCharite.models.User;
 import com.project.GestionCharite.models.enums.AuthProvider;
 import com.project.GestionCharite.models.enums.Role;
@@ -66,13 +67,30 @@ public class AdminService {
                     .build();
     }
 
-    // 3. Global Campaign Management
-    public List<ActionResponse> getAllCampaignsGlobally() {
-        // Reusing your existing mapping logic from CharityActionService
-        return actionRepository.findAll().stream()
-                .map(actionService::mapToResponse) 
-                .collect(Collectors.toList());
+    public PageResponse<ActionResponse> getAllActionsGlobally(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CharityAction> actionPage = actionRepository.findAll(pageable);
+        List<ActionResponse> content = actionPage.getContent().stream()
+                                        .map(actionService::mapToResponse)
+                                        .toList();
+        
+        return PageResponse.<ActionResponse>builder()
+                    .content(content)
+                    .pageNumber(actionPage.getNumber())
+                    .pageSize(actionPage.getSize())
+                    .totalElements(actionPage.getTotalElements())
+                    .totalPages(actionPage.getTotalPages())
+                    .isLast(actionPage.isLast())
+                    .build();
     }
+
+    // // 3. Global Campaign Management
+    // public List<ActionResponse> getAllCampaignsGlobally() {
+    //     // Reusing your existing mapping logic from CharityActionService
+    //     return actionRepository.findAll().stream()
+    //             .map(actionService::mapToResponse) 
+    //             .collect(Collectors.toList());
+    // }
 
     // 1. GET SINGLE USER
     public UserResponse getUserById(Long id) {

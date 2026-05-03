@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
-import type { PlatformUser } from '../../types';
+import type { PlatformUser, PageResponse } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminUserList = () => {
@@ -15,12 +15,11 @@ const AdminUserList = () => {
   const [totalElements, setTotalElements] = useState(0);
   const pageSize = 10;
 
-  // Re-fetch users whenever the currentPage changes
+  // 1. Memorized fetch function with strict PageResponse typing
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Pass pagination params directly via Axios
-      const response = await apiClient.get('/admin/users', {
+      const response = await apiClient.get<PageResponse<PlatformUser>>('/admin/users', {
         params: {
           page: currentPage,
           size: pageSize,
@@ -38,6 +37,7 @@ const AdminUserList = () => {
     }
   }, [currentPage]);
 
+  // 2. Safe execution on mount and page change
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);

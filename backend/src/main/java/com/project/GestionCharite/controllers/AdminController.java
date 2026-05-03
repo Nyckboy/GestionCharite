@@ -47,8 +47,11 @@ public class AdminController {
 
     // 🔒 SECURE: Global Campaign Management (SUPER_ADMIN only)
     @GetMapping("/actions/all")
-    public ResponseEntity<List<ActionResponse>> getAllGlobalActions() {
-        return ResponseEntity.ok(adminService.getAllCampaignsGlobally());
+    public ResponseEntity<PageResponse<ActionResponse>> getAllGlobalActions(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(adminService.getAllActionsGlobally(page, size));
     }
 
     @GetMapping("/users/{id}")
