@@ -1,5 +1,6 @@
 package com.project.GestionCharite.controllers;
 
+import com.project.GestionCharite.dto.PageResponse;
 import com.project.GestionCharite.dto.AdminDTOs.AdminStatsResponse;
 import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
 import com.project.GestionCharite.dto.UserDTOs.UserCreateRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -36,8 +38,11 @@ public class AdminController {
 
     // 🔒 SECURE: User Management (SUPER_ADMIN only)
     @GetMapping("/users")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(adminService.getAllUsers());
+    public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(adminService.getAllUsers(page, size));
     }
 
     // 🔒 SECURE: Global Campaign Management (SUPER_ADMIN only)
