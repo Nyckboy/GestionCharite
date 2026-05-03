@@ -3,6 +3,8 @@ package com.project.GestionCharite.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +19,7 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
   List<Organization> findByIsValidatedTrue();
   // Only show pending application for superAdmin
   List<Organization> findByIsValidatedFalse();
+  Page<Organization> findByIsValidatedFalse(Pageable pageable);
 
   List<Organization> findByManagerId(Long managerId);
 
