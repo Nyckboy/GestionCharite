@@ -5,9 +5,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.GestionCharite.dto.PageResponse;
+import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
 import com.project.GestionCharite.dto.DonationDTOs.DonationRequest;
 import com.project.GestionCharite.dto.DonationDTOs.DonationResponse;
 import com.project.GestionCharite.models.CharityAction;
@@ -56,22 +61,40 @@ public class DonationService {
         return mapToResponse(savedDonation);
     }
 
-    public List<DonationResponse> getDonationsForAction(Long actionId) {
-        return donationRepository.findByActionId(actionId)
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public PageResponse<DonationResponse> getDonationsForAction(Long actionId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Donation> donationPage = donationRepository.findByActionId(actionId, pageable);
+        List<DonationResponse> content = donationPage.getContent().stream()
+                                            .map(this::mapToResponse)
+                                            .toList();
+        return PageResponse.<DonationResponse>builder()
+                .content(content)
+                .pageNumber(donationPage.getNumber())
+                .pageSize(donationPage.getSize())
+                .totalElements(donationPage.getTotalElements())
+                .totalPages(donationPage.getTotalPages())
+                .isLast(donationPage.isLast())
+                .build();
     }
 
     // 🔒 SECURE METHOD: Get all donations for the logged-in user
-    public List<DonationResponse> getMyDonations(String email) {
+    public PageResponse<DonationResponse> getMyDonations(String email, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        Page<Donation> donationPage = donationRepository.findByDonorId(user.getId(), pageable);
+        List<DonationResponse> content = donationPage.getContent().stream()
+                                            .map(this::mapToResponse)
+                                            .toList();
 
-        return donationRepository.findByDonorId(user.getId())
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return PageResponse.<DonationResponse>builder()
+                .content(content)
+                .pageNumber(donationPage.getNumber())
+                .pageSize(donationPage.getSize())
+                .totalElements(donationPage.getTotalElements())
+                .totalPages(donationPage.getTotalPages())
+                .isLast(donationPage.isLast())
+                .build();
     }
 
     private DonationResponse mapToResponse(Donation donation) {

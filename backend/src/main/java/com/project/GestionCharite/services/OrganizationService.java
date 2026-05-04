@@ -1,5 +1,7 @@
 package com.project.GestionCharite.services;
 
+import com.project.GestionCharite.dto.PageResponse;
+import com.project.GestionCharite.dto.UserDTOs.UserResponse;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgAdminStatsResponse;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgRequest;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgResponse;
@@ -10,6 +12,10 @@ import com.project.GestionCharite.repositories.CharityActionRepository;
 import com.project.GestionCharite.repositories.OrganizationRepository;
 import com.project.GestionCharite.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,12 +124,21 @@ public class OrganizationService {
     // SUPER-ADMIN METHODS
     // --------------------------------------------------------
 
-    public List<OrgResponse> getPendingOrganizations() {
+    public PageResponse<OrgResponse> getPendingOrganizations(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         // Fetches all organizations where isValidated is false
-        return organizationRepository.findByIsValidatedFalse()
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        Page<Organization> orgPage = organizationRepository.findByIsValidatedFalse(pageable);
+        List<OrgResponse> content = orgPage.getContent().stream()
+                                        .map(this::mapToResponse)
+                                        .toList();
+        return PageResponse.<OrgResponse>builder()
+                .content(content)
+                .pageNumber(orgPage.getNumber())
+                .pageSize(orgPage.getSize())
+                .totalElements(orgPage.getTotalElements())
+                .totalPages(orgPage.getTotalPages())
+                .isLast(orgPage.isLast())
+                .build();
     }
 
     public OrgResponse validateOrganization(Long id) {

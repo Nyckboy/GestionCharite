@@ -1,5 +1,7 @@
 package com.project.GestionCharite.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +15,9 @@ import com.project.GestionCharite.models.enums.DonationStatus;
 @Repository
 public interface DonationRepository extends JpaRepository<Donation, Long>{
   List<Donation> findByDonorId(Long donorId);
+  Page<Donation> findByDonorId(Long donorId, Pageable pageable);
   List<Donation> findByActionId(Long actionId);
+  Page<Donation> findByActionId(Long actionId, Pageable pageable);
 
   // for Paypal/Strip
   Optional<Donation> findByTransactionId(String transactionId);

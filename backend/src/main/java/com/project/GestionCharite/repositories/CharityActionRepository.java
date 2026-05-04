@@ -1,5 +1,7 @@
 package com.project.GestionCharite.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,6 +17,7 @@ import java.util.List;
 public interface CharityActionRepository extends JpaRepository<CharityAction, Long>{
   
   List<CharityAction> findByCategory(ActionCategory category);
+  Page<CharityAction> findByCategory(ActionCategory category, Pageable pageable);
   List<CharityAction> findByOrganizationId(Long organizationId);
   List<CharityAction> findByOrganizationManagerId(Long managerId);
   @Query("SELECT COALESCE(SUM(a.currentAmount), 0) FROM CharityAction a")

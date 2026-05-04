@@ -1,5 +1,6 @@
 package com.project.GestionCharite.controllers;
 
+import com.project.GestionCharite.dto.PageResponse;
 import com.project.GestionCharite.dto.OrganizationDTOs.OrgResponse;
 import com.project.GestionCharite.services.OrganizationService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,11 @@ public class SuperAdminController {
 
     // 🔒 SECURE: Only SUPER_ADMIN can view pending organizations
     @GetMapping("/organizations/pending")
-    public ResponseEntity<List<OrgResponse>> getPendingOrganizations() {
-        return ResponseEntity.ok(organizationService.getPendingOrganizations());
+    public ResponseEntity<PageResponse<OrgResponse>> getPendingOrganizations(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(organizationService.getPendingOrganizations(page, size));
     }
 
     // 🔒 SECURE: Only SUPER_ADMIN can approve an organization

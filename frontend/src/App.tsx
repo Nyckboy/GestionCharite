@@ -24,9 +24,9 @@ import AdminUserCreate from './pages/admin/AdminUserCreate';
 import AdminUserEdit from './pages/admin/AdminUserEdit';
 import UserLayout from './pages/user/UserLayout';
 import UserProfile from './pages/user/UserProfile';
-import UserEditProfile from './pages/user/UserEditProfile';
 import UserDonations from './pages/user/UserDonations';
 import OrgDashboard from './pages/org/OrgDashboard';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -45,7 +45,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['USER']} />}>
           <Route path="/profile" element={<UserLayout />}>
             <Route index element={<UserProfile />} />
-            <Route path="edit" element={<UserEditProfile />} />
+            {/* <Route path="edit" element={<UserEditProfile />} /> */}
             <Route path="donations" element={<UserDonations />} />
           </Route>
         </Route>
@@ -84,7 +84,8 @@ function App() {
         </Route>
 
         {/* Catch-all redirect */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
+        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
       </Routes>
     </Router>
   );

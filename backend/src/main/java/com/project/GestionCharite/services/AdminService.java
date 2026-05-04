@@ -1,10 +1,12 @@
 package com.project.GestionCharite.services;
 
+import com.project.GestionCharite.dto.PageResponse;
 import com.project.GestionCharite.dto.AdminDTOs.AdminStatsResponse;
 import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
 import com.project.GestionCharite.dto.UserDTOs.UserCreateRequest;
 import com.project.GestionCharite.dto.UserDTOs.UserResponse;
 import com.project.GestionCharite.dto.UserDTOs.UserUpdateRequest;
+import com.project.GestionCharite.models.CharityAction;
 import com.project.GestionCharite.models.User;
 import com.project.GestionCharite.models.enums.AuthProvider;
 import com.project.GestionCharite.models.enums.Role;
@@ -14,6 +16,10 @@ import com.project.GestionCharite.repositories.OrganizationRepository;
 import com.project.GestionCharite.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,19 +49,48 @@ public class AdminService {
     }
 
     // 2. User Management
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(this::mapUserToResponse)
-                .collect(Collectors.toList());
+    public PageResponse<UserResponse> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAll(pageable);
+        List<UserResponse> content = userPage.getContent().stream()
+                                        .map(this::mapUserToResponse)
+                                        .toList(); 
+
+
+        return PageResponse.<UserResponse>builder()
+                    .content(content)
+                    .pageNumber(userPage.getNumber())
+                    .pageSize(userPage.getSize())
+                    .totalElements(userPage.getTotalElements())
+                    .totalPages(userPage.getTotalPages())
+                    .isLast(userPage.isLast())
+                    .build();
     }
 
-    // 3. Global Campaign Management
-    public List<ActionResponse> getAllCampaignsGlobally() {
-        // Reusing your existing mapping logic from CharityActionService
-        return actionRepository.findAll().stream()
-                .map(actionService::mapToResponse) 
-                .collect(Collectors.toList());
+    public PageResponse<ActionResponse> getAllActionsGlobally(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CharityAction> actionPage = actionRepository.findAll(pageable);
+        List<ActionResponse> content = actionPage.getContent().stream()
+                                        .map(actionService::mapToResponse)
+                                        .toList();
+        
+        return PageResponse.<ActionResponse>builder()
+                    .content(content)
+                    .pageNumber(actionPage.getNumber())
+                    .pageSize(actionPage.getSize())
+                    .totalElements(actionPage.getTotalElements())
+                    .totalPages(actionPage.getTotalPages())
+                    .isLast(actionPage.isLast())
+                    .build();
     }
+
+    // // 3. Global Campaign Management
+    // public List<ActionResponse> getAllCampaignsGlobally() {
+    //     // Reusing your existing mapping logic from CharityActionService
+    //     return actionRepository.findAll().stream()
+    //             .map(actionService::mapToResponse) 
+    //             .collect(Collectors.toList());
+    // }
 
     // 1. GET SINGLE USER
     public UserResponse getUserById(Long id) {

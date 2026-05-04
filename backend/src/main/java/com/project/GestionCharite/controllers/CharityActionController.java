@@ -1,5 +1,6 @@
 package com.project.GestionCharite.controllers;
 
+import com.project.GestionCharite.dto.PageResponse;
 import com.project.GestionCharite.dto.CharityDTOs.ActionRequest;
 import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
 import com.project.GestionCharite.dto.CharityDTOs.UpdateRequest;
@@ -7,6 +8,7 @@ import com.project.GestionCharite.models.ActionUpdate;
 import com.project.GestionCharite.models.enums.ActionCategory;
 import com.project.GestionCharite.services.CharityActionService;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -32,14 +34,21 @@ public class CharityActionController {
 
     // 🌍 PUBLIC: View all actions
     @GetMapping
-    public ResponseEntity<List<ActionResponse>> getAllActions() {
-        return ResponseEntity.ok(actionService.getAllActions());
+    public ResponseEntity<PageResponse<ActionResponse>> getAllActions(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(actionService.getAllActions(page, size));
     }
 
     // 🌍 PUBLIC: Anyone can view actions, no token required
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<ActionResponse>> getActionsByCategory(@PathVariable ActionCategory category) {
-        return ResponseEntity.ok(actionService.getActionsByCategory(category));
+    public ResponseEntity<PageResponse<ActionResponse>> getActionsByCategory(
+        @PathVariable ActionCategory category,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(actionService.getActionsByCategory(category, page, size));
     }
 
     @GetMapping("/{id}")
