@@ -1,9 +1,9 @@
 export type Role = 'USER' | 'ORG_ADMIN' | 'SUPER_ADMIN';
 
 export interface AuthUser {
-  id: number;
+  // id: number;
   firstName: string;
-  lastName: string;
+  // lastName: string;
   role: Role;
 }
 
@@ -58,7 +58,7 @@ export interface UserDonation {
   amount: number;
   donationDate: string;
   status: string;
-  actionTitle: string; 
+  actionTitle: string;
 }
 
 export interface AdminStats {
@@ -87,9 +87,9 @@ export interface PageResponse<T> {
   content: T[];
   totalPages: number;
   totalElements: number;
-  size: number;     // Spring's default for pageSize
-  number: number;   // Spring's default for pageNumber
-  last: boolean;    // Spring's default for isLast
+  size: number; // Spring's default for pageSize
+  number: number; // Spring's default for pageNumber
+  last: boolean; // Spring's default for isLast
   first: boolean;
   numberOfElements: number;
   empty: boolean;
