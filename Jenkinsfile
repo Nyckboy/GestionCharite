@@ -32,7 +32,8 @@ pipeline {
                     // 3. Build the images and start the containers
                     echo 'Building Docker Images and starting containers...'
                     sh 'docker-compose down'
-                    sh 'docker-compose up -d --build'
+                    sh 'docker-compose build --no-cache'
+                    sh 'docker-compose up -d'
                     
                     // 4. Securely delete the files so passwords aren't left behind
                     sh 'rm backend/.env'
