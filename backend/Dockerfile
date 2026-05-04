@@ -1,7 +1,7 @@
 # ==========================================
 # Stage 1: Build the Application
 # ==========================================
-FROM maven:3.9-eclipse-temurin-17 AS builder
+FROM maven:3.9-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 # Copy the pom.xml and download dependencies first (caches them for faster future builds)
@@ -16,7 +16,7 @@ RUN mvn clean package -DskipTests
 # ==========================================
 # Stage 2: Run the Application
 # ==========================================
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Copy ONLY the compiled .jar file from the builder stage
