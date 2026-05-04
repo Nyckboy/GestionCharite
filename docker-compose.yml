@@ -8,6 +8,9 @@ services:
     container_name: springboot_api
     ports:
       - "8081:8080" # VPS Port 8081 -> Container Port 8080
+    env_file:
+      # Docker reads the temporary file Jenkins just made and passes it to Spring Boot
+      - ./backend/.env 
     restart: always
 
   frontend:
