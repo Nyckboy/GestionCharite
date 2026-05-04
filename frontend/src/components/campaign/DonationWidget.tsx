@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
 import type { CharityAction, Donation } from '../../types';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 interface DonationWidgetProps {
   campaign: CharityAction;
@@ -45,10 +46,10 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
       setStatusMessage({ type: 'success', text: 'Thank you for your generous contribution!' });
       setAmount('');
       onDonationSuccess();
-    } catch (error: any) {
+    } catch (error) {
       setStatusMessage({
         type: 'error',
-        text: error.response?.data?.message || 'Failed to process transaction.',
+        text: getErrorMessage(error),
       });
     } finally {
       setIsSubmitting(false);

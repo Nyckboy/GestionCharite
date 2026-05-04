@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,8 +27,8 @@ const Login = () => {
       } else {
         navigate('/');
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid email or password.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Invalid email or password.');
     } finally {
       setIsLoading(false);
     }

@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { CharityAction, Category } from '../../types';
 import { supabase } from '../../api/supabase'; // Import Supabase client
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const CampaignEdit = () => {
   const navigate = useNavigate();
@@ -45,8 +46,8 @@ const CampaignEdit = () => {
           category: data.category,
           mediaUrl: data.mediaUrl || '', // Grab existing image URL
         });
-      } catch (err: any) {
-        setError('Failed to load campaign details.');
+      } catch (err) {
+        setError('Failed to load campaign details.' + getErrorMessage(err));
       } finally {
         setIsLoading(false);
       }
@@ -102,8 +103,8 @@ const CampaignEdit = () => {
       // Route back using the dynamic URL
       const backUrl = cameFromDashboard ? '/organization' : `/organization/${orgId}/campaigns`;
       navigate(backUrl);
-    } catch (err: any) {
-      setError(err.message || err.response?.data?.message || 'Failed to update campaign.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Failed to update campaign.');
       setIsSaving(false);
     }
   };

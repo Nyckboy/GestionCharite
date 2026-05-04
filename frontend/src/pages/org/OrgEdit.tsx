@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { Organization } from '../../types';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const OrgEdit = () => {
   const navigate = useNavigate();
@@ -31,8 +32,8 @@ const OrgEdit = () => {
           primaryContact: data.primaryContact,
           description: data.description,
         });
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to load organization details.');
+      } catch (err) {
+        setError(getErrorMessage(err) || 'Failed to load organization details.');
       } finally {
         setIsLoading(false);
       }
@@ -48,8 +49,8 @@ const OrgEdit = () => {
     try {
       await apiClient.put(`/organizations/${id}`, orgForm);
       navigate('/organization/list');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update organization.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Failed to update organization.');
       setIsSaving(false);
     }
   };

@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { Category } from '../../types';
 import { supabase } from '../../api/supabase';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const CampaignCreate = () => {
   const navigate = useNavigate();
@@ -60,8 +61,8 @@ const CampaignCreate = () => {
         mediaUrl: mediaUrl,
       });
       navigate(backUrl);
-    } catch (err: any) {
-      setError(err.message || err.response?.data?.message || 'Failed to create campaign.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Failed to create campaign.');
       setIsLoading(false);
     }
   };

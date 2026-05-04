@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '../../api/axios';
 import type { Organization, PageResponse } from '../../types';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const AdminOrgApprovals = () => {
   const [pendingOrgs, setPendingOrgs] = useState<Organization[]>([]);
@@ -33,7 +34,8 @@ const AdminOrgApprovals = () => {
       setTotalElements(response.data.totalElements);
     } catch (error) {
       setActionError(
-        'Could not load pending organizations. Ensure you have Super Admin privileges.',
+        'Could not load pending organizations. Ensure you have Super Admin privileges.' +
+          getErrorMessage(error),
       );
     } finally {
       setIsLoading(false);
@@ -51,8 +53,8 @@ const AdminOrgApprovals = () => {
       await apiClient.patch(`/admin/organizations/${id}/validate`);
       // Refresh the current page to ensure pagination stays accurate and pulls up the next org
       fetchPendingOrganizations();
-    } catch (error: any) {
-      setActionError(error.response?.data?.message || 'Failed to approve organization.');
+    } catch (error) {
+      setActionError(getErrorMessage(error) || 'Failed to approve organization.');
     }
   };
 

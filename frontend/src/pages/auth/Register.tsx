@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { Role } from '../../types';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -27,43 +28,51 @@ const Register = () => {
     try {
       await apiClient.post('/auth/register', formData);
       navigate('/login');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-[#f5faff] min-h-screen flex items-center justify-center p-6 antialiased font-['Inter',sans-serif]">
-      <main className="w-full max-w-120 flex flex-col items-center">
-        
+    <div className="flex min-h-screen items-center justify-center bg-[#f5faff] p-6 font-['Inter',sans-serif] antialiased">
+      <main className="flex w-full max-w-120 flex-col items-center">
         {/* Brand / Identity */}
         <div className="mb-6 flex flex-col items-center">
-          <span className="material-symbols-outlined text-[#002045] text-[48px] mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>
+          <span
+            className="material-symbols-outlined mb-2 text-[48px] text-[#002045]"
+            style={{ fontVariationSettings: "'FILL' 1" }}
+          >
             person_add
           </span>
-          <h1 className="text-3xl font-bold text-[#002045] tracking-tight text-center">Gestion Charité</h1>
+          <h1 className="text-center text-3xl font-bold tracking-tight text-[#002045]">
+            Gestion Charité
+          </h1>
         </div>
 
         {/* Register Card Container */}
-        <div className="w-full bg-white rounded-xl border border-[#dee3e8] shadow-sm p-8 flex flex-col gap-6 relative overflow-hidden">
+        <div className="relative flex w-full flex-col gap-6 overflow-hidden rounded-xl border border-[#dee3e8] bg-white p-8 shadow-sm">
           {/* Top accent line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-[#002045]"></div>
+          <div className="absolute top-0 right-0 left-0 h-1 bg-[#002045]"></div>
 
           {/* Header */}
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-[#171c20] mb-1">Create an account</h2>
-            <p className="text-sm text-[#43474e] mb-4">Join our community and start making an impact</p>
-            <div className="inline-flex items-center gap-2 bg-[#eff4f9] border border-[#dee3e8] rounded-full px-4 py-1 text-[#006d3c]">
+            <h2 className="mb-1 text-2xl font-semibold text-[#171c20]">Create an account</h2>
+            <p className="mb-4 text-sm text-[#43474e]">
+              Join our community and start making an impact
+            </p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#dee3e8] bg-[#eff4f9] px-4 py-1 text-[#006d3c]">
               <span className="material-symbols-outlined text-[16px]">verified_user</span>
-              <span className="text-xs font-bold uppercase tracking-wider">Secure Registration</span>
+              <span className="text-xs font-bold tracking-wider uppercase">
+                Secure Registration
+              </span>
             </div>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="p-3 text-sm text-[#ba1a1a] bg-[#ffdad6] border border-[#ba1a1a]/10 rounded-lg flex items-center gap-2">
+            <div className="flex items-center gap-2 rounded-lg border border-[#ba1a1a]/10 bg-[#ffdad6] p-3 text-sm text-[#ba1a1a]">
               <span className="material-symbols-outlined text-[18px]">error</span>
               {error}
             </div>
@@ -72,8 +81,8 @@ const Register = () => {
           {/* Form Area */}
           <form onSubmit={handleRegister} className="flex flex-col gap-4">
             {/* Name Row */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 flex flex-col gap-1">
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="flex flex-1 flex-col gap-1">
                 <label className="text-sm font-semibold text-[#171c20]">First Name</label>
                 <input
                   type="text"
@@ -81,11 +90,11 @@ const Register = () => {
                   value={formData.firstName}
                   onChange={handleChange}
                   placeholder="John"
-                  className="w-full bg-[#e9eef3] border-none text-base rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#002045] outline-none transition-all"
+                  className="w-full rounded-lg border-none bg-[#e9eef3] px-4 py-2 text-base transition-all outline-none focus:ring-2 focus:ring-[#002045]"
                   required
                 />
               </div>
-              <div className="flex-1 flex flex-col gap-1">
+              <div className="flex flex-1 flex-col gap-1">
                 <label className="text-sm font-semibold text-[#171c20]">Last Name</label>
                 <input
                   type="text"
@@ -93,7 +102,7 @@ const Register = () => {
                   value={formData.lastName}
                   onChange={handleChange}
                   placeholder="Doe"
-                  className="w-full bg-[#e9eef3] border-none text-base rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#002045] outline-none transition-all"
+                  className="w-full rounded-lg border-none bg-[#e9eef3] px-4 py-2 text-base transition-all outline-none focus:ring-2 focus:ring-[#002045]"
                   required
                 />
               </div>
@@ -108,7 +117,7 @@ const Register = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="john@example.com"
-                className="w-full bg-[#e9eef3] border-none text-base rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#002045] outline-none transition-all"
+                className="w-full rounded-lg border-none bg-[#e9eef3] px-4 py-2 text-base transition-all outline-none focus:ring-2 focus:ring-[#002045]"
                 required
               />
             </div>
@@ -122,7 +131,7 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full bg-[#e9eef3] border-none text-base rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#002045] outline-none transition-all"
+                className="w-full rounded-lg border-none bg-[#e9eef3] px-4 py-2 text-base transition-all outline-none focus:ring-2 focus:ring-[#002045]"
                 required
               />
             </div>
@@ -134,7 +143,7 @@ const Register = () => {
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="w-full bg-[#e9eef3] border-none text-base rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#002045] outline-none transition-all appearance-none cursor-pointer"
+                className="w-full cursor-pointer appearance-none rounded-lg border-none bg-[#e9eef3] px-4 py-2 text-base transition-all outline-none focus:ring-2 focus:ring-[#002045]"
               >
                 <option value="USER">Donate to campaigns (User)</option>
                 <option value="ORG_ADMIN">Register an Organization (Org Admin)</option>
@@ -145,18 +154,20 @@ const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 bg-[#002045] text-white font-semibold py-3 rounded-lg hover:opacity-95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#002045] py-3 font-semibold text-white transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? 'Creating account...' : 'Create Account'}
-              {!isLoading && <span className="material-symbols-outlined text-[18px]">how_to_reg</span>}
+              {!isLoading && (
+                <span className="material-symbols-outlined text-[18px]">how_to_reg</span>
+              )}
             </button>
           </form>
 
           {/* Login Link */}
-          <div className="pt-4 border-t border-[#dee3e8] text-center">
+          <div className="border-t border-[#dee3e8] pt-4 text-center">
             <p className="text-sm text-[#43474e]">
-              Already have an account? 
-              <Link to="/login" className="font-semibold text-[#002045] hover:underline ml-1">
+              Already have an account?
+              <Link to="/login" className="ml-1 font-semibold text-[#002045] hover:underline">
                 Log in here
               </Link>
             </p>

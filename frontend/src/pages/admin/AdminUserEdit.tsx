@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { PlatformUser } from '../../types';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const AdminUserEdit = () => {
   const navigate = useNavigate();
@@ -28,8 +29,8 @@ const AdminUserEdit = () => {
           email: response.data.email,
           role: response.data.role,
         });
-      } catch (err: any) {
-        setError(err.response?.data || 'Failed to load user details.');
+      } catch (err) {
+        setError(getErrorMessage(err) || 'Failed to load user details.');
       } finally {
         setIsLoading(false);
       }
@@ -45,8 +46,8 @@ const AdminUserEdit = () => {
     try {
       await apiClient.put(`/admin/users/${id}`, formData);
       navigate('/admin/users');
-    } catch (err: any) {
-      setError(err.response?.data || 'Failed to update user.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Failed to update user.');
       setIsSaving(false);
     }
   };

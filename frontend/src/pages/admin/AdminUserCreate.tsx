@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { PlatformUser } from '../../types';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const AdminUserCreate = () => {
   const navigate = useNavigate();
@@ -23,8 +24,8 @@ const AdminUserCreate = () => {
     try {
       await apiClient.post('/admin/users', formData);
       navigate('/admin/users');
-    } catch (err: any) {
-      setError(err.response?.data || 'Failed to create user.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Failed to create user.');
       setIsLoading(false);
     }
   };

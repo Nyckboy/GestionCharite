@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { CharityAction } from '../../types';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const CampaignList = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const CampaignList = () => {
       try {
         const response = await apiClient.get<CharityAction[]>(`/actions/organization/${id}`);
         setCampaigns(response.data);
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to fetch campaigns', err);
         setError('Could not load campaign data. Please try again.');
       } finally {
@@ -33,10 +34,8 @@ const CampaignList = () => {
     try {
       await apiClient.delete(`/actions/${actionId}`);
       setCampaigns((prev) => prev.filter((campaign) => campaign.id !== actionId));
-    } catch (err: any) {
-      alert(
-        err.response?.data?.message || 'Failed to delete campaign. It may have existing donations.',
-      );
+    } catch (err) {
+      alert(getErrorMessage(err) || 'Failed to delete campaign. It may have existing donations.');
     }
   };
 

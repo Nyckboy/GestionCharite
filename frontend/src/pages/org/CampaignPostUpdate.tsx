@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const CampaignPostUpdate = () => {
   const navigate = useNavigate();
@@ -18,8 +19,8 @@ const CampaignPostUpdate = () => {
     try {
       await apiClient.post(`/actions/${actionId}/updates`, { message });
       navigate(`/organization/${orgId}/campaigns`);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to post update.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Failed to post update.');
       setIsLoading(false);
     }
   };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const OrgCreate = () => {
   const navigate = useNavigate();
@@ -21,8 +22,8 @@ const OrgCreate = () => {
     try {
       await apiClient.post('/organizations', orgForm);
       navigate('/organization/list');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to submit organization.');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Failed to submit organization.');
       setIsLoading(false);
     }
   };

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { PlatformUser, PageResponse } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const AdminUserList = () => {
   const { user: currentUser } = useAuth();
@@ -57,8 +58,8 @@ const AdminUserList = () => {
       await apiClient.delete(`/admin/users/${id}`);
       // Refresh the current page to ensure pagination stays accurate after a deletion
       fetchUsers();
-    } catch (err: any) {
-      alert(err.response?.data || 'Failed to delete user.');
+    } catch (err) {
+      alert(getErrorMessage(err) || 'Failed to delete user.');
     }
   };
 

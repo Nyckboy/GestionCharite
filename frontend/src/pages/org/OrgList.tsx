@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { Organization } from '../../types';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const OrgList = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -31,8 +32,8 @@ const OrgList = () => {
     try {
       await apiClient.delete(`/organizations/${orgId}`);
       setOrganizations((prev) => prev.filter((org) => org.id !== orgId));
-    } catch (err: any) {
-      alert(err.response?.data || 'Failed to delete organization.');
+    } catch (err) {
+      alert(getErrorMessage(err) || 'Failed to delete organization.');
     }
   };
 
