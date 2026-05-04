@@ -18,8 +18,8 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await apiClient.post('/auth/login', { email, password });
-      const { token, role, firstName } = response.data;
-      login(token, { firstName, role });
+      const { token, role, firstName, id, lastName } = response.data;
+      login(token, { firstName, role, lastName, id });
       if (role === 'SUPER_ADMIN') {
         navigate('/admin');
       } else if (role === 'ORG_ADMIN') {
