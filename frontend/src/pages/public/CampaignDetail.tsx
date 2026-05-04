@@ -1,24 +1,37 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
-import type { CharityAction, Donation } from '../../types';
+import type { CharityAction, Donation, PageResponse } from '../../types';
 import CampaignStory from '../../components/campaign/CampaignStory';
 import DonationWidget from '../../components/campaign/DonationWidget';
 
 const CampaignDetail = () => {
   const { actionId } = useParams();
   const [campaign, setCampaign] = useState<CharityAction | null>(null);
+
+  // Donation Pagination State
   const [recentDonations, setRecentDonations] = useState<Donation[]>([]);
+  const [donationPage, setDonationPage] = useState(0);
+  const [donationTotalPages, setDonationTotalPages] = useState(1);
+  const [isDonationsLoading, setIsDonationsLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const PAGE_SIZE = 5; // Smaller page size for a sidebar widget
+
+  // 1. Initial Load: Fetches Campaign + Page 0 of Donations
   const fetchData = useCallback(async () => {
     try {
       const [campRes, donRes] = await Promise.all([
         apiClient.get<CharityAction>(`/actions/${actionId}`),
-        apiClient.get<Donation[]>(`/donations/action/${actionId}`),
+        apiClient.get<PageResponse<Donation>>(`/donations/action/${actionId}`, {
+          params: { page: 0, size: PAGE_SIZE },
+        }),
       ]);
+
       setCampaign(campRes.data);
-      setRecentDonations(donRes.data);
+      setRecentDonations(donRes.data.content);
+      setDonationTotalPages(donRes.data.totalPages);
+      setDonationPage(0); // Reset page state on fresh load
     } catch (error) {
       console.error('Fetch failed', error);
     } finally {
@@ -30,6 +43,30 @@ const CampaignDetail = () => {
     if (actionId) fetchData();
   }, [actionId, fetchData]);
 
+  // 2. Load More: Appends the next page of donations to the list
+  const loadMoreDonations = async () => {
+    if (donationPage >= donationTotalPages - 1) return;
+
+    setIsDonationsLoading(true);
+    try {
+      const nextPage = donationPage + 1;
+      const response = await apiClient.get<PageResponse<Donation>>(
+        `/donations/action/${actionId}`,
+        {
+          params: { page: nextPage, size: PAGE_SIZE },
+        },
+      );
+
+      setRecentDonations((prev) => [...prev, ...response.data.content]);
+      setDonationTotalPages(response.data.totalPages);
+      setDonationPage(nextPage);
+    } catch (error) {
+      console.error('Failed to load more donations', error);
+    } finally {
+      setIsDonationsLoading(false);
+    }
+  };
+
   if (isLoading)
     return (
       <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
@@ -39,7 +76,7 @@ const CampaignDetail = () => {
   if (!campaign) return <div className="py-24 text-center text-[#ba1a1a]">Campaign not found.</div>;
 
   return (
-    <main className="mx-auto max-w-360 px-6 pt-24 pb-16 font-['Inter',sans-serif] lg:px-8">
+    <main className="mx-auto max-w-[1440px] px-6 pt-24 pb-16 font-['Inter',sans-serif] lg:px-8">
       {/* Header Area */}
       <header className="mb-10">
         <Link
@@ -73,7 +110,10 @@ const CampaignDetail = () => {
           <DonationWidget
             campaign={campaign}
             recentDonations={recentDonations}
-            onDonationSuccess={fetchData}
+            onDonationSuccess={fetchData} // Refreshing calls fetchData, resetting list to show new donation at top
+            onLoadMore={loadMoreDonations}
+            hasMore={donationPage < donationTotalPages - 1}
+            isLoadingMore={isDonationsLoading}
           />
         </div>
       </div>

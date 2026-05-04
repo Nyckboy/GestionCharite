@@ -48,7 +48,11 @@ public class DonationController {
 
     // 🌍 PUBLIC: Anyone can view the list of donations for a specific campaign
     @GetMapping("/action/{actionId}")
-    public ResponseEntity<List<DonationResponse>> getDonationsForAction(@PathVariable Long actionId) {
-        return ResponseEntity.ok(donationService.getDonationsForAction(actionId));
+    public ResponseEntity<PageResponse<DonationResponse>> getDonationsForAction(
+        @PathVariable Long actionId,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(donationService.getDonationsForAction(actionId, page, size));
     }
 }

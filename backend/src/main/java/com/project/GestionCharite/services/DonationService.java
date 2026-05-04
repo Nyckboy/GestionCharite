@@ -61,11 +61,20 @@ public class DonationService {
         return mapToResponse(savedDonation);
     }
 
-    public List<DonationResponse> getDonationsForAction(Long actionId) {
-        return donationRepository.findByActionId(actionId)
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public PageResponse<DonationResponse> getDonationsForAction(Long actionId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Donation> donationPage = donationRepository.findByActionId(actionId, pageable);
+        List<DonationResponse> content = donationPage.getContent().stream()
+                                            .map(this::mapToResponse)
+                                            .toList();
+        return PageResponse.<DonationResponse>builder()
+                .content(content)
+                .pageNumber(donationPage.getNumber())
+                .pageSize(donationPage.getSize())
+                .totalElements(donationPage.getTotalElements())
+                .totalPages(donationPage.getTotalPages())
+                .isLast(donationPage.isLast())
+                .build();
     }
 
     // 🔒 SECURE METHOD: Get all donations for the logged-in user
