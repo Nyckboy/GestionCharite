@@ -1,25 +1,28 @@
 version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: springboot_api
-    ports:
-      - "8081:8080" # VPS Port 8081 -> Container Port 8080
-    env_file:
-      # Docker reads the temporary file Jenkins just made and passes it to Spring Boot
-      - ./backend/.env 
-    restart: always
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: springboot_api
+        ports:
+            - '8081:8080' # VPS Port 8081 -> Container Port 8080
+        env_file:
+            # Docker reads the temporary file Jenkins just made and passes it to Spring Boot
+            - ./backend/.env
+        restart: always
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: react_ui
-    ports:
-      - "3001:80"   # VPS Port 3000 -> Container Port 80
-    depends_on:
-      - backend
-    restart: always
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+            args: # Injecting the variables here!
+                VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+                VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+        container_name: react_ui
+        ports:
+            - '3001:80'
+        depends_on:
+            - backend
+        restart: always

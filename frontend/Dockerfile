@@ -4,19 +4,21 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm
+# 1. Open the gates to accept variables from Docker Compose
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
 
-# Copy package files and install dependencies
+# 2. Lock them into the container's memory
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+
+RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --frozen-lockfile
 
-# Copy the rest of your source code
-# MAGIC TRICK: This step copies the temporary .env file that Jenkins just created!
 COPY . .
-
-# Vite automatically finds the .env file and bakes the Supabase keys into the code
-RUN pnpm build
+# 3. Vite will now see them in the system memory (no .env file needed!)
+RUN pnpm build 
 
 # ==========================================
 # Stage 2: Serve with Nginx

@@ -18,26 +18,27 @@ pipeline {
 
         stage('Inject Secrets & Build') {
             steps {
-                // Grab BOTH secrets from Jenkins Credentials
                 withCredentials([
                     string(credentialsId: 'BACKEND_PROD_ENV', variable: 'BACKEND_SECRET'),
-                    string(credentialsId: 'FRONTEND_PROD_ENV', variable: 'FRONTEND_SECRET')
+                    string(credentialsId: 'SUPABASE_URL', variable: 'URL_SECRET'),
+                    string(credentialsId: 'SUPABASE_KEY', variable: 'KEY_SECRET')
                 ]) {
-                    // 1. Write the Spring Boot secrets into the backend folder
-                    sh 'echo "$BACKEND_SECRET" > backend/.env'
+                    // 1. Write the Spring Boot file (Backend still needs this)
+                    writeFile file: 'backend/.env', text: env.BACKEND_SECRET
                     
-                    // 2. Write the Supabase keys into the frontend folder
-                    sh 'echo "$FRONTEND_SECRET" > frontend/.env'
+                    // 2. Export Frontend variables straight into the terminal memory, then build!
+                    sh """
+                    export VITE_SUPABASE_URL=\$URL_SECRET
+                    export VITE_SUPABASE_ANON_KEY=\$KEY_SECRET
                     
-                    // 3. Build the images and start the containers
-                    echo 'Building Docker Images and starting containers...'
-                    sh 'docker-compose down'
-                    sh 'docker-compose build --no-cache'
-                    sh 'docker-compose up -d'
+                    echo 'Building Docker Images...'
+                    docker-compose down
+                    docker-compose build --no-cache
+                    docker-compose up -d
+                    """
                     
-                    // 4. Securely delete the files so passwords aren't left behind
+                    // 3. Clean up backend file
                     sh 'rm backend/.env'
-                    sh 'rm frontend/.env'
                 }
             }
         }
