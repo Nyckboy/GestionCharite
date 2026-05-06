@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/actions/**").permitAll() // Anyone can view charity actions
+                .requestMatchers(HttpMethod.GET, "/api/v1/donations/action/**").permitAll() // Anyone can view suporters
                 .requestMatchers(HttpMethod.GET, "/api/v1/organizations/**").permitAll() // Anyone can view organizations
                 
                 // Role-specific endpoints
