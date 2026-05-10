@@ -28,6 +28,7 @@ FROM nginx:alpine
 # Remove default nginx static assets
 RUN rm -rf /usr/share/nginx/html/*
 
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy the compiled React app from the builder stage
 # NOTE: Make sure your Vite build output folder is actually "dist". 
 COPY --from=builder /app/dist /usr/share/nginx/html
