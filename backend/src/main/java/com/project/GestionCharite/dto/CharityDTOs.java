@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.GestionCharite.models.ActionUpdate;
 import com.project.GestionCharite.models.enums.ActionCategory;
 import com.project.GestionCharite.models.enums.DonationStatus;
@@ -43,6 +44,7 @@ public class CharityDTOs {
     private Long organizationId;
     private String organizationName; // Just the name, not the whole Org object
     private String mediaUrl; // Optional: URL from Supabase Storage
+    @JsonProperty("isArchived")
     private boolean isArchived;
   } 
 
