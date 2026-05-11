@@ -26,16 +26,28 @@ const CampaignList = () => {
     if (id) fetchCampaigns();
   }, [id]);
 
-  const handleDelete = async (actionId: number) => {
-    const isConfirmed = window.confirm(
-      'Are you sure you want to delete this campaign? This action cannot be undone.',
-    );
+  // NEW: Archive / Unarchive Handler
+  const handleToggleArchive = async (actionId: number, currentlyArchived: boolean) => {
+    const actionEndpoint = currentlyArchived ? 'unarchive' : 'archive';
+    const confirmationMessage = currentlyArchived
+      ? 'Are you sure you want to unarchive this campaign? It will be visible to the public again.'
+      : 'Are you sure you want to archive this campaign? It will be hidden from the public feed but preserved in your records.';
+
+    const isConfirmed = window.confirm(confirmationMessage);
     if (!isConfirmed) return;
+
     try {
-      await apiClient.delete(`/actions/${actionId}`);
-      setCampaigns((prev) => prev.filter((campaign) => campaign.id !== actionId));
+      // Assuming your endpoints are POST or PATCH. Adjust the HTTP method if needed (e.g., apiClient.put or apiClient.post)
+      await apiClient.patch(`/actions/${actionId}/${actionEndpoint}`);
+
+      // Update the local state instantly to reflect the new status
+      setCampaigns((prev) =>
+        prev.map((campaign) =>
+          campaign.id === actionId ? { ...campaign, isArchived: !currentlyArchived } : campaign,
+        ),
+      );
     } catch (err) {
-      alert(getErrorMessage(err) || 'Failed to delete campaign. It may have existing donations.');
+      alert(getErrorMessage(err) || `Failed to ${actionEndpoint} campaign.`);
     }
   };
 
@@ -91,10 +103,15 @@ const CampaignList = () => {
               100,
             ).toFixed(0);
 
+            // Boolean check for archived status
+            const isArchived = !!campaign.isArchived;
+
             return (
               <div
                 key={campaign.id}
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)] transition-shadow hover:shadow-md"
+                className={`flex flex-col overflow-hidden rounded-2xl border bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)] transition-all hover:shadow-md ${
+                  isArchived ? 'border-[#e4e9ee] opacity-80' : 'border-[#dee3e8]'
+                }`}
               >
                 {/* Media Header */}
                 <div className="relative h-40 bg-[#eff4f9]">
@@ -102,16 +119,25 @@ const CampaignList = () => {
                     <img
                       src={campaign.mediaUrl}
                       alt={campaign.title}
-                      className="h-full w-full object-cover"
+                      className={`h-full w-full object-cover ${isArchived ? 'grayscale' : ''}`}
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-xs font-bold tracking-widest text-[#74777f] uppercase">
                       No Media
                     </div>
                   )}
-                  <span className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold tracking-wider text-[#006d3c] uppercase shadow-sm backdrop-blur">
-                    {campaign.category}
-                  </span>
+
+                  {/* Category and Status Badges */}
+                  <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    <span className="w-fit rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold tracking-wider text-[#006d3c] uppercase shadow-sm backdrop-blur">
+                      {campaign.category}
+                    </span>
+                    {isArchived && (
+                      <span className="w-fit rounded-full bg-[#171c20]/90 px-3 py-1 text-[10px] font-bold tracking-wider text-white uppercase shadow-sm backdrop-blur">
+                        Archived
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex flex-1 flex-col p-5">
@@ -123,14 +149,16 @@ const CampaignList = () => {
                   </p>
 
                   {/* Progress & Stats */}
-                  <div className="mb-5 space-y-3 rounded-xl border border-[#dee3e8] bg-[#f5faff] p-3">
+                  <div
+                    className={`mb-5 space-y-3 rounded-xl border p-3 ${isArchived ? 'border-transparent bg-[#e4e9ee]/50' : 'border-[#dee3e8] bg-[#f5faff]'}`}
+                  >
                     <div className="flex justify-between text-xs font-bold">
                       <span className="text-[#43474e]">Raised: {campaign.currentAmount}</span>
                       <span className="text-[#006d3c]">{progress}%</span>
                     </div>
                     <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#dee3e8]">
                       <div
-                        className="h-full rounded-full bg-[#48bb78]"
+                        className={`h-full rounded-full ${isArchived ? 'bg-[#74777f]' : 'bg-[#48bb78]'}`}
                         style={{ width: `${progress}%` }}
                       ></div>
                     </div>
@@ -147,24 +175,39 @@ const CampaignList = () => {
 
                   {/* Action Buttons */}
                   <div className="mt-auto flex gap-2 border-t border-[#dee3e8] pt-4">
+                    {/* Disable Post Update if Archived */}
                     <Link
                       to={`/organization/${id}/campaign/${campaign.id}/update`}
-                      className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-transparent bg-[#eff4f9] px-2 py-2 text-xs font-bold text-[#002045] transition-colors hover:border-[#dee3e8]"
+                      className={`flex flex-1 items-center justify-center gap-1 rounded-lg border border-transparent px-2 py-2 text-xs font-bold transition-colors ${
+                        isArchived
+                          ? 'pointer-events-none bg-[#e4e9ee] text-[#c4c6cf]'
+                          : 'bg-[#eff4f9] text-[#002045] hover:border-[#dee3e8]'
+                      }`}
                     >
                       <span className="material-symbols-outlined text-[14px]">post_add</span> Post
                       Update
                     </Link>
+
                     <Link
                       to={`/organization/${id}/campaign/${campaign.id}/edit`}
                       className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#c4c6cf] bg-white px-2 py-2 text-xs font-bold text-[#43474e] transition-colors hover:bg-[#f5faff]"
                     >
                       <span className="material-symbols-outlined text-[14px]">edit</span> Edit
                     </Link>
+
+                    {/* The New Toggle Archive Button */}
                     <button
-                      onClick={() => handleDelete(campaign.id)}
-                      className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-[#ffdad6]/30 px-2 py-2 text-xs font-bold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/70"
+                      onClick={() => handleToggleArchive(campaign.id, isArchived)}
+                      className={`flex flex-1 items-center justify-center gap-1 rounded-lg px-2 py-2 text-xs font-bold transition-colors ${
+                        isArchived
+                          ? 'bg-[#d6e3ff] text-[#001b3c] hover:bg-[#adc7f7]' // Blue for Unarchive
+                          : 'bg-[#fffbeb] text-[#b45309] hover:bg-[#fde68a]' // Orange/Warning for Archive
+                      }`}
                     >
-                      <span className="material-symbols-outlined text-[14px]">delete</span> Drop
+                      <span className="material-symbols-outlined text-[14px]">
+                        {isArchived ? 'unarchive' : 'archive'}
+                      </span>
+                      {isArchived ? 'Unarchive' : 'Archive'}
                     </button>
                   </div>
                 </div>

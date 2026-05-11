@@ -74,7 +74,7 @@ public class CharityActionService {
 
     public PageResponse<ActionResponse> getActionsByCategory(ActionCategory category, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<CharityAction> actionPage = actionRepository.findByCategory(category, pageable);
+        Page<CharityAction> actionPage = actionRepository.findByCategoryAndIsArchivedFalse(category, pageable);
         List<ActionResponse> content = actionPage.getContent().stream()
                                         .map(this::mapToResponse)
                                         .toList();
@@ -91,7 +91,7 @@ public class CharityActionService {
   // 🌍 PUBLIC METHOD: Fetch absolutely all campaigns for the homepage
     public PageResponse<ActionResponse> getAllActions(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<CharityAction> actionPage = actionRepository.findAll(pageable);
+        Page<CharityAction> actionPage = actionRepository.findAllByIsArchivedFalse(pageable);
         List<ActionResponse> content = actionPage.getContent().stream()
                                         .map(this::mapToResponse)
                                         .toList();
@@ -187,21 +187,48 @@ public class CharityActionService {
               .collect(Collectors.toList());
   }
 
-  public ActionResponse mapToResponse(CharityAction action) {
-    return ActionResponse.builder()
-            .id(action.getId())
-            .title(action.getTitle())
-            .description(action.getDescription())
-            .longStory(action.getLongStory())
-            .updates(action.getUpdates())
-            .actionDate(action.getActionDate())
-            .targetAmount(action.getTargetAmount())
-            .currentAmount(action.getCurrentAmount())
-            .category(action.getCategory())
-            .organizationName(action.getOrganization().getName())
-            .organizationId(action.getOrganization().getId())
-            .location(action.getLocation())
-            .mediaUrl(action.getMediaUrl())
-            .build();
-  }
+    // 🔒 SECURE: Archive a campaign (Soft Delete)
+    public ActionResponse archiveCampaign(Long id) {
+        CharityAction action = actionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Campaign not found"));
+
+        // Toggle the status to true
+        action.setArchived(true);
+        
+        // Save and return the updated DTO
+        CharityAction savedAction = actionRepository.save(action);
+        return mapToResponse(savedAction);
+    }
+
+    // 🔒 SECURE: Unarchive a campaign (Restore)
+    public ActionResponse unarchiveCampaign(Long id) {
+        CharityAction action = actionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Campaign not found"));
+
+        // Toggle the status back to false (active)
+        action.setArchived(false);
+        
+        // Save and return the restored DTO
+        CharityAction savedAction = actionRepository.save(action);
+        return mapToResponse(savedAction);
+    }
+
+    public ActionResponse mapToResponse(CharityAction action) {
+        return ActionResponse.builder()
+                .id(action.getId())
+                .title(action.getTitle())
+                .description(action.getDescription())
+                .longStory(action.getLongStory())
+                .updates(action.getUpdates())
+                .actionDate(action.getActionDate())
+                .targetAmount(action.getTargetAmount())
+                .currentAmount(action.getCurrentAmount())
+                .category(action.getCategory())
+                .organizationName(action.getOrganization().getName())
+                .organizationId(action.getOrganization().getId())
+                .location(action.getLocation())
+                .mediaUrl(action.getMediaUrl())
+                .isArchived(action.isArchived())
+                .build();
+    }
 }

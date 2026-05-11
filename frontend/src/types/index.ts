@@ -43,6 +43,7 @@ export interface CharityAction {
   category: Category;
   organizationId: number;
   mediaUrl?: string;
+  isArchived?: boolean;
 }
 
 export interface Donation {

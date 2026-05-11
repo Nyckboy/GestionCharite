@@ -43,6 +43,7 @@ public class CharityDTOs {
     private Long organizationId;
     private String organizationName; // Just the name, not the whole Org object
     private String mediaUrl; // Optional: URL from Supabase Storage
+    private boolean isArchived;
   } 
 
   @Data

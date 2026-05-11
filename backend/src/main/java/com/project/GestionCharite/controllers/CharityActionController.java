@@ -98,6 +98,17 @@ public class CharityActionController {
         return ResponseEntity.ok("Campaign successfully deleted.");
     }
 
+    // 🔒 SECURE: Archive a specific campaign
+    @PatchMapping("/{id}/archive")
+    public ResponseEntity<ActionResponse> archiveCampaign(@PathVariable Long id) {
+        return ResponseEntity.ok(actionService.archiveCampaign(id));
+    }
+
+    @PatchMapping("/{id}/unarchive")
+    public ResponseEntity<ActionResponse> unarchiveCampaign(@PathVariable Long id) {
+        return ResponseEntity.ok(actionService.unarchiveCampaign(id));
+    }
+
     // 🔒 SECURE: Get all campaigns managed by this admin
     @GetMapping("/me/all")
     public ResponseEntity<List<ActionResponse>> getMyCampaigns(Authentication authentication) {

@@ -58,6 +58,9 @@ public class CharityAction {
   @Column(columnDefinition = "TEXT")
     private String longStory;
 
+  @Column(name = "is_archived", columnDefinition = "boolean default false")
+    private boolean isArchived;
+
   // This creates a separate lightweight table in your database to hold the updates
   @ElementCollection
   @CollectionTable(name = "action_updates", joinColumns = @JoinColumn(name = "action_id"))
