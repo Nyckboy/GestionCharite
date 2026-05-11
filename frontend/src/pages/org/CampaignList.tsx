@@ -15,6 +15,8 @@ const CampaignList = () => {
       setIsLoading(true);
       try {
         const response = await apiClient.get<CharityAction[]>(`/actions/organization/${id}`);
+        console.log(response.data);
+
         setCampaigns(response.data);
       } catch (err) {
         console.error('Failed to fetch campaigns', err);
