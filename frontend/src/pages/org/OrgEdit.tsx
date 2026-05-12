@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import type { Organization } from '../../types';
 import { getErrorMessage } from '../../utils/errorHandler';
@@ -7,6 +8,7 @@ import { getErrorMessage } from '../../utils/errorHandler';
 const OrgEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -33,14 +35,14 @@ const OrgEdit = () => {
           description: data.description,
         });
       } catch (err) {
-        setError(getErrorMessage(err) || 'Failed to load organization details.');
+        setError(getErrorMessage(err) || t('orgEdit.errLoad'));
       } finally {
         setIsLoading(false);
       }
     };
 
     if (id) fetchOrg();
-  }, [id]);
+  }, [id, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +52,7 @@ const OrgEdit = () => {
       await apiClient.put(`/organizations/${id}`, orgForm);
       navigate('/organization/list');
     } catch (err) {
-      setError(getErrorMessage(err) || 'Failed to update organization.');
+      setError(getErrorMessage(err) || t('orgEdit.errUpdate'));
       setIsSaving(false);
     }
   };
@@ -58,7 +60,7 @@ const OrgEdit = () => {
   if (isLoading) {
     return (
       <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
-        Loading organization profile...
+        {t('orgEdit.loading')}
       </div>
     );
   }
@@ -69,16 +71,14 @@ const OrgEdit = () => {
         to="/organization/list"
         className="inline-flex items-center gap-2 text-sm font-bold text-[#002045] hover:underline"
       >
-        <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to
-        Organizations
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>{' '}
+        {t('orgEdit.backToOrgs')}
       </Link>
 
       <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
         <div className="border-b border-[#dee3e8] bg-[#f5faff]/50 px-8 py-6">
-          <h2 className="text-2xl font-bold text-[#002045]">Edit Organization Profile</h2>
-          <p className="mt-1 text-sm font-medium text-[#74777f]">
-            Update your non-profit entity records.
-          </p>
+          <h2 className="text-2xl font-bold text-[#002045]">{t('orgEdit.title')}</h2>
+          <p className="mt-1 text-sm font-medium text-[#74777f]">{t('orgEdit.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 p-8">
@@ -90,7 +90,7 @@ const OrgEdit = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Organization Name
+              {t('orgEdit.orgNameLabel')}
             </label>
             <input
               type="text"
@@ -103,7 +103,7 @@ const OrgEdit = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Legal Address
+              {t('orgEdit.legalAddressLabel')}
             </label>
             <input
               type="text"
@@ -117,7 +117,7 @@ const OrgEdit = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Tax Identification Number
+                {t('orgEdit.taxIdLabel')}
               </label>
               <input
                 type="text"
@@ -131,7 +131,7 @@ const OrgEdit = () => {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Primary Contact Email
+                {t('orgEdit.contactEmailLabel')}
               </label>
               <input
                 type="email"
@@ -145,7 +145,7 @@ const OrgEdit = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Mission Description
+              {t('orgEdit.missionLabel')}
             </label>
             <textarea
               value={orgForm.description}
@@ -163,7 +163,7 @@ const OrgEdit = () => {
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 font-bold text-white transition-all hover:bg-[#1a365d] active:scale-[0.99] disabled:opacity-50"
             >
               <span className="material-symbols-outlined">save</span>
-              {isSaving ? 'Saving Updates...' : 'Save Changes'}
+              {isSaving ? t('orgEdit.btnSaving') : t('orgEdit.btnSave')}
             </button>
           </div>
         </form>

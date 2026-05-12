@@ -1,5 +1,6 @@
 // src/pages/org/OrgDash.tsx
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
 import type { Organization } from '../../types';
@@ -7,16 +8,13 @@ import { getErrorMessage } from '../../utils/errorHandler';
 
 const OrgDash = () => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
-  // --- View State ---
-  // This toggles the screen between the list and the form
   const [view, setView] = useState<'list' | 'create'>('list');
 
-  // --- List State ---
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isLoadingList, setIsLoadingList] = useState(false);
 
-  // --- Form State ---
   const [formData, setFormData] = useState({
     name: '',
     legalAddress: '',
@@ -30,7 +28,6 @@ const OrgDash = () => {
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 1. Fetch organizations when the 'list' view is active
   useEffect(() => {
     if (view === 'list') {
       fetchOrganizations();
@@ -40,10 +37,7 @@ const OrgDash = () => {
   const fetchOrganizations = async () => {
     setIsLoadingList(true);
     try {
-      // Assuming your GET /organizations returns a list.
       const response = await apiClient.get<Organization[]>('/organizations/my-orgs');
-      console.log(response.data);
-
       setOrganizations(response.data);
     } catch (error) {
       console.error('Failed to fetch organizations', error);
@@ -52,7 +46,6 @@ const OrgDash = () => {
     }
   };
 
-  // 2. Form Handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -66,9 +59,8 @@ const OrgDash = () => {
       await apiClient.post('/organizations', formData);
       setStatusMessage({
         type: 'success',
-        text: 'Organization submitted successfully! Please wait for a Super Admin to approve your account.',
+        text: t('orgDash.msgSuccess'),
       });
-      // Clear form on success
       setFormData({
         name: '',
         legalAddress: '',
@@ -77,7 +69,6 @@ const OrgDash = () => {
         description: '',
       });
 
-      // Automatically switch back to the list view after 2.5 seconds
       setTimeout(() => {
         setView('list');
         setStatusMessage(null);
@@ -85,7 +76,7 @@ const OrgDash = () => {
     } catch (error) {
       setStatusMessage({
         type: 'error',
-        text: getErrorMessage(error) || 'Failed to submit organization. Please try again.',
+        text: getErrorMessage(error) || t('orgDash.msgError'),
       });
     } finally {
       setIsSubmitting(false);
@@ -94,46 +85,44 @@ const OrgDash = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Top Navbar */}
       <nav className="flex items-center justify-between bg-blue-800 p-4 text-white shadow-md">
-        <h1 className="text-xl font-bold">Organization Dashboard</h1>
+        <h1 className="text-xl font-bold">{t('orgDash.title')}</h1>
         <div className="flex items-center gap-4">
-          <span>Welcome, {user?.firstName}</span>
+          <span>
+            {t('orgDash.welcome')} {user?.firstName}
+          </span>
           <button
             onClick={logout}
             className="rounded bg-red-600 px-4 py-2 text-sm transition-colors hover:bg-red-700"
           >
-            Logout
+            {t('orgDash.btnLogout')}
           </button>
         </div>
       </nav>
 
       <div className="mx-auto mt-8 max-w-4xl p-8">
-        {/* ======================= */}
-        {/* LIST VIEW        */}
-        {/* ======================= */}
         {view === 'list' && (
           <div className="fade-in">
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">Your Organizations</h2>
-                <p className="text-gray-600">Manage your charities and campaigns.</p>
+                <h2 className="text-2xl font-bold text-gray-800">{t('orgDash.yourOrgs')}</h2>
+                <p className="text-gray-600">{t('orgDash.manageOrgs')}</p>
               </div>
               <button
                 onClick={() => setView('create')}
                 className="rounded bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
               >
-                + Register New Organization
+                {t('orgDash.btnRegisterNew')}
               </button>
             </div>
 
             {isLoadingList ? (
               <div className="rounded-lg bg-white p-8 text-center shadow-sm">
-                <p className="animate-pulse text-gray-500">Loading organizations...</p>
+                <p className="animate-pulse text-gray-500">{t('orgDash.loadingOrgs')}</p>
               </div>
             ) : organizations.length === 0 ? (
               <div className="rounded-lg bg-white p-8 text-center shadow-sm">
-                <p className="mb-4 text-gray-500">You haven't registered any organizations yet.</p>
+                <p className="mb-4 text-gray-500">{t('orgDash.noOrgs')}</p>
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2">
@@ -145,32 +134,32 @@ const OrgDash = () => {
                     <div>
                       <div className="mb-2 flex items-start justify-between">
                         <h3 className="text-xl font-bold text-gray-800">{org.name}</h3>
-                        {/* Dynamic status badge */}
                         <span
                           className={`rounded px-2 py-1 text-xs font-semibold ${org.isValidated ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
                         >
-                          {org.isValidated ? 'Approved' : 'Pending'}
+                          {org.isValidated
+                            ? t('orgDash.statusApproved')
+                            : t('orgDash.statusPending')}
                         </span>
                       </div>
                       <p className="mb-4 line-clamp-3 text-sm text-gray-600">{org.description}</p>
                       <p className="text-xs text-gray-500">
-                        <strong>Tax ID:</strong> {org.taxIdentificationNumber}
+                        <strong>{t('orgDash.taxId')}</strong> {org.taxIdentificationNumber}
                       </p>
                     </div>
 
-                    {/* Placeholders for future backend endpoints */}
                     <div className="mt-6 flex gap-2 border-t border-gray-100 pt-4">
                       <button
                         disabled
                         className="w-1/2 cursor-not-allowed rounded bg-gray-100 px-3 py-2 text-sm text-gray-400"
                       >
-                        Edit (Soon)
+                        {t('orgDash.btnEditSoon')}
                       </button>
                       <button
                         disabled
                         className="w-1/2 cursor-not-allowed rounded bg-gray-100 px-3 py-2 text-sm text-gray-400"
                       >
-                        Delete (Soon)
+                        {t('orgDash.btnDeleteSoon')}
                       </button>
                     </div>
                   </div>
@@ -180,22 +169,17 @@ const OrgDash = () => {
           </div>
         )}
 
-        {/* ======================= */}
-        {/* CREATE VIEW       */}
-        {/* ======================= */}
         {view === 'create' && (
           <div className="fade-in rounded-lg bg-white p-8 shadow-md">
             <button
               onClick={() => setView('list')}
               className="mb-6 text-sm text-blue-600 hover:underline"
             >
-              &larr; Back to List
+              {t('orgDash.backToList')}
             </button>
 
-            <h2 className="mb-2 text-2xl font-bold text-gray-800">Register Your Organization</h2>
-            <p className="mb-6 text-gray-600">
-              Submit your charity details for platform validation.
-            </p>
+            <h2 className="mb-2 text-2xl font-bold text-gray-800">{t('orgDash.createTitle')}</h2>
+            <p className="mb-6 text-gray-600">{t('orgDash.createSubtitle')}</p>
 
             {statusMessage && (
               <div
@@ -208,7 +192,7 @@ const OrgDash = () => {
             <form onSubmit={handleSubmitOrg} className="space-y-4">
               <div>
                 <label className="mb-1 block text-sm font-semibold text-gray-700">
-                  Organization Name
+                  {t('orgDash.orgNameLabel')}
                 </label>
                 <input
                   type="text"
@@ -222,7 +206,7 @@ const OrgDash = () => {
 
               <div>
                 <label className="mb-1 block text-sm font-semibold text-gray-700">
-                  Legal Address
+                  {t('orgDash.legalAddressLabel')}
                 </label>
                 <input
                   type="text"
@@ -237,7 +221,7 @@ const OrgDash = () => {
               <div className="flex gap-4">
                 <div className="w-1/2">
                   <label className="mb-1 block text-sm font-semibold text-gray-700">
-                    Tax ID Number
+                    {t('orgDash.taxIdLabel')}
                   </label>
                   <input
                     type="text"
@@ -250,7 +234,7 @@ const OrgDash = () => {
                 </div>
                 <div className="w-1/2">
                   <label className="mb-1 block text-sm font-semibold text-gray-700">
-                    Primary Contact
+                    {t('orgDash.primaryContactLabel')}
                   </label>
                   <input
                     type="text"
@@ -265,7 +249,7 @@ const OrgDash = () => {
 
               <div>
                 <label className="mb-1 block text-sm font-semibold text-gray-700">
-                  Description
+                  {t('orgDash.descLabel')}
                 </label>
                 <textarea
                   name="description"
@@ -282,7 +266,7 @@ const OrgDash = () => {
                 disabled={isSubmitting}
                 className="w-full rounded bg-blue-600 p-3 font-semibold text-white transition-colors hover:bg-blue-700 disabled:bg-blue-300"
               >
-                {isSubmitting ? 'Submitting...' : 'Submit for Approval'}
+                {isSubmitting ? t('orgDash.btnSubmitting') : t('orgDash.btnSubmit')}
               </button>
             </form>
           </div>

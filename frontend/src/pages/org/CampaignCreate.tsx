@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import type { Category } from '../../types';
 import { supabase } from '../../api/supabase';
@@ -9,10 +10,13 @@ const CampaignCreate = () => {
   const navigate = useNavigate();
   const { id: orgId } = useParams();
   const location = useLocation();
+  const { t } = useTranslation();
   const cameFromOrgList = location.state?.fromOrgList;
 
   const backUrl = cameFromOrgList ? '/organization/list' : `/organization/${orgId}/campaigns`;
-  const backLabel = cameFromOrgList ? 'Back to Organizations' : 'Back to Campaigns';
+  const backLabel = cameFromOrgList
+    ? t('campaignList.backToOrgs')
+    : t('campaignEdit.backToCampaigns');
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,10 +82,8 @@ const CampaignCreate = () => {
 
       <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
         <div className="border-b border-[#dee3e8] bg-[#f5faff]/50 px-8 py-6">
-          <h2 className="text-2xl font-bold text-[#002045]">Create New Campaign</h2>
-          <p className="mt-1 text-sm font-medium text-[#74777f]">
-            Define your mission goals and start accepting donations.
-          </p>
+          <h2 className="text-2xl font-bold text-[#002045]">{t('campaignCreate.title')}</h2>
+          <p className="mt-1 text-sm font-medium text-[#74777f]">{t('campaignCreate.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 p-8">
@@ -91,10 +93,9 @@ const CampaignCreate = () => {
             </div>
           )}
 
-          {/* Media Upload (Restyled) */}
           <div className="space-y-2">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Campaign Image
+              {t('campaignCreate.campaignImage')}
             </label>
             <div className="flex w-full items-center justify-center">
               <label className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#dee3e8] bg-[#f5faff] transition-colors hover:bg-[#eff4f9]">
@@ -107,11 +108,12 @@ const CampaignCreate = () => {
                       imageFile.name
                     ) : (
                       <>
-                        <span className="text-[#002045]">Click to upload</span> or drag and drop
+                        <span className="text-[#002045]">{t('campaignCreate.clickToUpload')}</span>{' '}
+                        {t('campaignCreate.dragAndDrop')}
                       </>
                     )}
                   </p>
-                  <p className="text-xs text-[#74777f]">PNG, JPG up to 10MB</p>
+                  <p className="text-xs text-[#74777f]">{t('campaignCreate.fileConstraints')}</p>
                 </div>
                 <input
                   type="file"
@@ -125,7 +127,7 @@ const CampaignCreate = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Campaign Title
+              {t('campaignEdit.campaignTitle')}
             </label>
             <input
               type="text"
@@ -139,7 +141,7 @@ const CampaignCreate = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Category
+                {t('campaignEdit.category')}
               </label>
               <select
                 value={campaignForm.category}
@@ -148,15 +150,15 @@ const CampaignCreate = () => {
                 }
                 className="w-full appearance-none rounded-lg border-none bg-[#eff4f9] px-4 py-3 text-sm font-medium text-[#171c20] outline-none focus:ring-2 focus:ring-[#002045]"
               >
-                <option value="EDUCATION">Education</option>
-                <option value="ENVIRONNEMENT">Environment</option>
-                <option value="SANTE">Health</option>
-                <option value="URGENCE">Emergency</option>
+                <option value="EDUCATION">{t('campaignEdit.catEducation')}</option>
+                <option value="ENVIRONNEMENT">{t('campaignEdit.catEnvironment')}</option>
+                <option value="SANTE">{t('campaignEdit.catHealth')}</option>
+                <option value="URGENCE">{t('campaignEdit.catEmergency')}</option>
               </select>
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Target Amount
+                {t('campaignEdit.targetAmount')}
               </label>
               <div className="relative">
                 <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold text-[#74777f]">
@@ -180,7 +182,7 @@ const CampaignCreate = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Action Date
+                {t('campaignEdit.actionDate')}
               </label>
               <input
                 type="date"
@@ -192,7 +194,7 @@ const CampaignCreate = () => {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Location
+                {t('campaignEdit.location')}
               </label>
               <input
                 type="text"
@@ -206,7 +208,7 @@ const CampaignCreate = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Description
+              {t('campaignEdit.description')}
             </label>
             <textarea
               value={campaignForm.description}
@@ -223,7 +225,7 @@ const CampaignCreate = () => {
               disabled={isLoading}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 font-bold text-white transition-all hover:bg-[#1a365d] active:scale-[0.99] disabled:opacity-50"
             >
-              {isLoading ? 'Creating Campaign...' : 'Launch Campaign'}
+              {isLoading ? t('campaignCreate.btnLaunching') : t('campaignCreate.btnLaunch')}
               {!isLoading && <span className="material-symbols-outlined">rocket_launch</span>}
             </button>
           </div>

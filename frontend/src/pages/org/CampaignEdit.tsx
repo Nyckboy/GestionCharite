@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import type { CharityAction, Category } from '../../types';
 import { supabase } from '../../api/supabase';
@@ -8,6 +9,7 @@ import { getErrorMessage } from '../../utils/errorHandler';
 const CampaignEdit = () => {
   const navigate = useNavigate();
   const { id: orgId, actionId } = useParams();
+  const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -43,14 +45,14 @@ const CampaignEdit = () => {
           mediaUrl: data.mediaUrl || '',
         });
       } catch (err) {
-        setError('Failed to load campaign details. ' + getErrorMessage(err));
+        setError(t('campaignEdit.errLoad') + ' ' + getErrorMessage(err));
       } finally {
         setIsLoading(false);
       }
     };
 
     if (actionId) fetchCampaign();
-  }, [actionId]);
+  }, [actionId, t]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -94,18 +96,20 @@ const CampaignEdit = () => {
       const backUrl = cameFromDashboard ? '/organization' : `/organization/${orgId}/campaigns`;
       navigate(backUrl);
     } catch (err) {
-      setError(getErrorMessage(err) || 'Failed to update campaign.');
+      setError(getErrorMessage(err) || t('campaignEdit.errUpdate'));
       setIsSaving(false);
     }
   };
 
   const backUrl = cameFromDashboard ? '/organization' : `/organization/${orgId}/campaigns`;
-  const backLabel = cameFromDashboard ? 'Back to Dashboard' : 'Back to Campaigns';
+  const backLabel = cameFromDashboard
+    ? t('campaignEdit.backToDashboard')
+    : t('campaignEdit.backToCampaigns');
 
   if (isLoading) {
     return (
       <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
-        Loading campaign data...
+        {t('campaignEdit.errLoad')}
       </div>
     );
   }
@@ -121,10 +125,8 @@ const CampaignEdit = () => {
 
       <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
         <div className="border-b border-[#dee3e8] bg-[#f5faff]/50 px-8 py-6">
-          <h2 className="text-2xl font-bold text-[#002045]">Edit Campaign</h2>
-          <p className="mt-1 text-sm font-medium text-[#74777f]">
-            Update mission details and media.
-          </p>
+          <h2 className="text-2xl font-bold text-[#002045]">{t('campaignEdit.editCampaign')}</h2>
+          <p className="mt-1 text-sm font-medium text-[#74777f]">{t('campaignEdit.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 p-8">
@@ -134,10 +136,9 @@ const CampaignEdit = () => {
             </div>
           )}
 
-          {/* Styled Image Upload Field */}
           <div className="space-y-2">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Update Campaign Image
+              {t('campaignEdit.updateImage')}
             </label>
 
             {campaignForm.mediaUrl && !imageFile && (
@@ -148,7 +149,9 @@ const CampaignEdit = () => {
                     alt="Current"
                     className="h-12 w-20 rounded-md object-cover shadow-sm"
                   />
-                  <span className="text-sm font-semibold text-[#43474e]">Current Active Media</span>
+                  <span className="text-sm font-semibold text-[#43474e]">
+                    {t('campaignEdit.currentMedia')}
+                  </span>
                 </div>
               </div>
             )}
@@ -164,11 +167,12 @@ const CampaignEdit = () => {
                       imageFile.name
                     ) : (
                       <>
-                        <span className="text-[#002045]">Choose new image</span> or drag it here
+                        <span className="text-[#002045]">{t('campaignEdit.chooseNew')}</span>{' '}
+                        {t('campaignEdit.dragHere')}
                       </>
                     )}
                   </p>
-                  <p className="text-xs text-[#74777f]">Leave blank to keep current image.</p>
+                  <p className="text-xs text-[#74777f]">{t('campaignEdit.leaveBlankImage')}</p>
                 </div>
                 <input
                   type="file"
@@ -182,7 +186,7 @@ const CampaignEdit = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Campaign Title
+              {t('campaignEdit.campaignTitle')}
             </label>
             <input
               type="text"
@@ -196,7 +200,7 @@ const CampaignEdit = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Category
+                {t('campaignEdit.category')}
               </label>
               <select
                 value={campaignForm.category}
@@ -205,15 +209,15 @@ const CampaignEdit = () => {
                 }
                 className="w-full appearance-none rounded-lg border-none bg-[#eff4f9] px-4 py-3 text-sm font-medium text-[#171c20] outline-none focus:ring-2 focus:ring-[#002045]"
               >
-                <option value="EDUCATION">Education</option>
-                <option value="ENVIRONNEMENT">Environment</option>
-                <option value="SANTE">Health</option>
-                <option value="URGENCE">Emergency</option>
+                <option value="EDUCATION">{t('campaignEdit.catEducation')}</option>
+                <option value="ENVIRONNEMENT">{t('campaignEdit.catEnvironment')}</option>
+                <option value="SANTE">{t('campaignEdit.catHealth')}</option>
+                <option value="URGENCE">{t('campaignEdit.catEmergency')}</option>
               </select>
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Target Amount
+                {t('campaignEdit.targetAmount')}
               </label>
               <div className="relative">
                 <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold text-[#74777f]">
@@ -237,7 +241,7 @@ const CampaignEdit = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Action Date
+                {t('campaignEdit.actionDate')}
               </label>
               <input
                 type="date"
@@ -249,7 +253,7 @@ const CampaignEdit = () => {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Location
+                {t('campaignEdit.location')}
               </label>
               <input
                 type="text"
@@ -263,7 +267,7 @@ const CampaignEdit = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Description
+              {t('campaignEdit.description')}
             </label>
             <textarea
               value={campaignForm.description}
@@ -281,7 +285,7 @@ const CampaignEdit = () => {
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 font-bold text-white transition-all hover:bg-[#1a365d] active:scale-[0.99] disabled:opacity-50"
             >
               <span className="material-symbols-outlined text-[20px]">save</span>
-              {isSaving ? 'Saving Updates...' : 'Save Changes'}
+              {isSaving ? t('campaignEdit.btnSavingUpdates') : t('campaignEdit.btnSave')}
             </button>
           </div>
         </form>
