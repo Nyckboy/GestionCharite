@@ -1,0 +1,24 @@
+{
+  "adminLayout": {
+    "platformAdmin": "Platform Admin",
+    "superAdminConsole": "Super Admin Console",
+    "overview": "Overview",
+    "pendingApprovals": "Pending Approvals",
+    "globalCampaigns": "Global Campaigns",
+    "manageUsers": "Manage Users",
+    "loggedInAs": "Logged in as:",
+    "secureLogout": "Secure Logout",
+    "commandCenter": "Command Center",
+    "viewPublicSite": "View Public Site →"
+  },
+  "adminOverview": {
+    "platformOverview": "Platform Overview",
+    "gatheringAnalytics": "Gathering platform analytics...",
+    "totalRaised": "Total Raised",
+    "activeCampaigns": "Active Campaigns",
+    "pendingOrgs": "Pending Orgs",
+    "registeredUsers": "Registered Users",
+    "systemStatus": "System Status",
+    "systemsNormal": "All backend services operating normally."
+  }
+}
