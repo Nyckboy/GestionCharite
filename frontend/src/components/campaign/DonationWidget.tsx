@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'; // <-- Added
 import { apiClient } from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
 import type { CharityAction, Donation } from '../../types';
@@ -9,7 +10,6 @@ interface DonationWidgetProps {
   campaign: CharityAction;
   recentDonations: Donation[];
   onDonationSuccess: () => void;
-  // New Pagination Props
   onLoadMore: () => void;
   hasMore: boolean;
   isLoadingMore: boolean;
@@ -24,6 +24,7 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
   isLoadingMore,
 }) => {
   const { isAuthenticated, user } = useAuth();
+  const { t } = useTranslation(); // <-- Added
   const [amount, setAmount] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{
@@ -43,7 +44,7 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
         amount: parseFloat(amount),
         actionId: campaign.id,
       });
-      setStatusMessage({ type: 'success', text: 'Thank you for your generous contribution!' });
+      setStatusMessage({ type: 'success', text: t('donationWidget.successMsg') });
       setAmount('');
       onDonationSuccess();
     } catch (error) {
@@ -58,22 +59,19 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
 
   return (
     <div className="sticky top-24 space-y-8 font-['Inter',sans-serif]">
-      {/* 1. Main Donation Card */}
       <div className="rounded-2xl border border-[#dee3e8] bg-white p-8 shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
-        {/* Header Stats */}
         <div className="mb-4 flex items-end justify-between">
           <div>
             <span className="text-3xl font-bold text-[#002045]">
               {campaign.currentAmount.toLocaleString()} MAD
             </span>
             <span className="ml-2 text-sm font-semibold text-[#74777f]">
-              raised of {campaign.targetAmount.toLocaleString()}
+              {t('donationWidget.raisedOf')} {campaign.targetAmount.toLocaleString()}
             </span>
           </div>
           <span className="text-sm font-bold text-[#006d3c]">{progressPercentage.toFixed(0)}%</span>
         </div>
 
-        {/* Progress Bar (Action Green) */}
         <div className="mb-8 h-2 w-full overflow-hidden rounded-full bg-[#eff4f9]">
           <div
             className="h-full rounded-full bg-[#48bb78] transition-all duration-1000 ease-out"
@@ -81,7 +79,6 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
           ></div>
         </div>
 
-        {/* Status Messages */}
         {statusMessage && (
           <div
             className={`mb-6 flex items-center gap-2 rounded-xl p-4 text-sm font-bold ${statusMessage.type === 'success' ? 'border border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]' : 'border border-[#fecaca] bg-[#ffdad6] text-[#ba1a1a]'}`}
@@ -93,33 +90,32 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
           </div>
         )}
 
-        {/* Interactive Form or Auth Walls */}
         {!isAuthenticated ? (
           <div className="rounded-xl border border-[#dee3e8] bg-[#f5faff] p-6 text-center">
             <p className="mb-4 text-sm font-bold text-[#002045]">
-              Log in to make a secure donation.
+              {t('donationWidget.loginPrompt')}
             </p>
             <Link
               to="/login"
               className="mb-2 block w-full rounded-xl bg-[#002045] py-3.5 font-bold text-white transition-colors hover:bg-[#1a365d]"
             >
-              Log In
+              {t('donationWidget.btnLogin')}
             </Link>
             <Link
               to="/register"
               className="block w-full rounded-xl border border-[#c4c6cf] bg-white py-3.5 font-bold text-[#43474e] transition-colors hover:bg-[#eff4f9]"
             >
-              Sign Up
+              {t('donationWidget.btnSignup')}
             </Link>
           </div>
         ) : user?.role !== 'USER' ? (
           <div className="rounded-xl bg-[#ffdad6] p-4 text-center text-sm font-bold text-[#ba1a1a]">
-            Administrative accounts cannot process public donations.
+            {t('donationWidget.adminErr')}
           </div>
         ) : (
           <div className="space-y-4">
             <label className="block text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Donation Amount
+              {t('donationWidget.donationAmount')}
             </label>
             <form onSubmit={handleDonationSubmit} className="space-y-4">
               <div className="relative">
@@ -143,20 +139,23 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
                 className="flex w-full items-center justify-center space-x-2 rounded-xl bg-[#48bb78] py-4 text-base font-bold text-white transition-all hover:bg-[#38a169] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span className="material-symbols-outlined text-[20px]">volunteer_activism</span>
-                <span>{isSubmitting ? 'Processing Securely...' : 'Donate Now'}</span>
+                <span>
+                  {isSubmitting
+                    ? t('donationWidget.processingSecurely')
+                    : t('donationWidget.btnDonate')}
+                </span>
               </button>
             </form>
             <p className="px-4 text-center text-[10px] font-bold tracking-widest text-[#74777f] uppercase">
-              Tax-deductible contribution
+              {t('donationWidget.taxDeductible')}
             </p>
           </div>
         )}
 
-        {/* Footer Stats */}
         <div className="mt-8 flex items-center justify-between border-t border-[#dee3e8] pt-6 text-[#74777f]">
           <div className="flex items-center space-x-2">
             <span className="material-symbols-outlined text-[18px]">public</span>
-            <span className="text-sm font-bold">Global Reach</span>
+            <span className="text-sm font-bold">{t('donationWidget.globalReach')}</span>
           </div>
           <div className="flex items-center space-x-1.5 rounded-lg bg-[#d6e3ff] px-3 py-1">
             <span className="relative flex h-2 w-2">
@@ -164,18 +163,17 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#002045]"></span>
             </span>
             <span className="text-xs font-bold tracking-wider text-[#002045] uppercase">
-              Active
+              {t('donationWidget.active')}
             </span>
           </div>
         </div>
       </div>
 
-      {/* 2. Supporters Feed */}
       <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
         <div className="flex items-center justify-between border-b border-[#dee3e8] bg-[#f5faff] px-6 py-5">
           <h3 className="flex items-center gap-2 text-sm font-bold text-[#002045]">
-            <span className="material-symbols-outlined text-[18px]">favorite</span> Recent
-            Supporters
+            <span className="material-symbols-outlined text-[18px]">favorite</span>{' '}
+            {t('donationWidget.recentSupporters')}
           </h3>
         </div>
 
@@ -185,9 +183,7 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
               <span className="material-symbols-outlined mb-2 text-3xl text-[#c4c6cf]">
                 sentiment_satisfied
               </span>
-              <p className="text-sm font-semibold text-[#74777f]">
-                Be the first to support this cause!
-              </p>
+              <p className="text-sm font-semibold text-[#74777f]">{t('donationWidget.beFirst')}</p>
             </div>
           ) : (
             recentDonations.map((donation, index) => {
@@ -211,7 +207,7 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold text-[#002045]">
-                      {donation.firstName || 'Anonymous Donor'}
+                      {donation.firstName || t('donationWidget.anonymous')}
                     </p>
                     <p className="text-xs font-bold text-[#006d3c]">
                       {donation.amount.toLocaleString()} MAD
@@ -228,7 +224,6 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
             })
           )}
 
-          {/* Pagination: Load More Button */}
           {hasMore && (
             <div className="px-2 pt-2 pb-1">
               <button
@@ -236,7 +231,9 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
                 disabled={isLoadingMore}
                 className="flex w-full items-center justify-center gap-1 rounded-lg border border-[#c4c6cf] py-2.5 text-xs font-bold text-[#43474e] transition-colors hover:bg-[#eff4f9] hover:text-[#002045] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isLoadingMore ? 'Loading...' : 'View Older Donations'}
+                {isLoadingMore
+                  ? t('donationWidget.loading')
+                  : t('donationWidget.viewOlderDonations')}
                 {!isLoadingMore && (
                   <span className="material-symbols-outlined text-[14px]">expand_more</span>
                 )}
