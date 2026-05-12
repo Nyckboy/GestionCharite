@@ -82,7 +82,15 @@
     "errUpdate": "Failed to update user.",
     "errDeleteOwn": "System Error: You cannot delete your own active administrative session.",
     "confirmDelete": "Are you sure you want to permanently delete this user? This action cannot be undone.",
-    "errDelete": "Failed to delete user."
+    "errDelete": "Failed to delete user.",
+    "backToDir": "Back to Directory",
+    "provisionTitle": "Provision New Account",
+    "provisionSubtitle": "Create a user and assign system privileges.",
+    "editSubtitle": "Modify user information and system access levels.",
+    "btnProvisioning": "Provisioning...",
+    "btnProvision": "Provision Account",
+    "btnApplying": "Applying Changes...",
+    "btnSaveConfig": "Save Configuration"
   },
   "pagination": {
     "showingPage": "Showing page",
@@ -90,5 +98,57 @@
     "total": "total",
     "prev": "Prev",
     "next": "Next"
+  },
+  "publicFeed": {
+    "catAll": "All Causes",
+    "catEdu": "Education",
+    "catEnv": "Environment",
+    "catHealth": "Health",
+    "catEmergency": "Emergency",
+    "heroTitle": "Empowering transparent giving for lasting impact.",
+    "heroSubtitle": "Join a global network of donors and non-profits dedicated to measurable change. Every donation is tracked, every milestone celebrated.",
+    "btnExplore": "Explore Campaigns",
+    "btnHowItWorks": "How it Works",
+    "noPreview": "No Preview Image",
+    "ofTarget": "% of target",
+    "supportMission": "Support Mission"
+  },
+  "userDonations": {
+    "title": "My Impact",
+    "subtitle": "A history of the campaigns you have supported.",
+    "loading": "Loading donation history...",
+    "empty": "You haven't made any donations yet.",
+    "colDate": "Date",
+    "colCampaign": "Campaign",
+    "colAmount": "Amount",
+    "colReceipt": "Receipt",
+    "noDetails": "Campaign Details Unavailable",
+    "btnDownload": "Download",
+    "alertReceipt": "In a real app, this would download a PDF receipt for Donation #"
+  },
+  "campaignDetail": {
+    "verifying": "Verifying Registry...",
+    "notFound": "Campaign not found.",
+    "backToFeed": "Back to Feed",
+    "verified": "Verified"
+  },
+  "donationWidget": {
+    "raisedOf": "raised of",
+    "successMsg": "Thank you for your generous contribution!",
+    "errMsg": "Failed to process transaction.",
+    "loginPrompt": "Log in to make a secure donation.",
+    "btnLogin": "Log In",
+    "btnSignup": "Sign Up",
+    "adminErr": "Administrative accounts cannot process public donations.",
+    "enterAmount": "Enter Donation Amount",
+    "btnProcessing": "Processing...",
+    "btnDonate": "Donate Now",
+    "taxMsg": "Your contribution is tax-deductible and directly supports the mission.",
+    "donors": "Donors",
+    "active": "Active",
+    "recentSupporters": "Recent Supporters",
+    "viewAll": "View All",
+    "beFirst": "Be the first to support this cause!",
+    "anonymous": "Anonymous"
   }
 }
