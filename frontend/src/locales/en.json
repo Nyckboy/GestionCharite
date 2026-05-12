@@ -147,7 +147,14 @@
     "colReceipt": "Receipt",
     "noDetails": "Campaign Details Unavailable",
     "btnDownload": "Download",
-    "alertReceipt": "In a real app, this would download a PDF receipt for Donation #"
+    "alertReceipt": "In a real app, this would download a PDF receipt for Donation #",
+    "emptyTitle": "No contributions yet.",
+    "emptySubtitle": "Your future donations will appear here, along with tax receipts.",
+    "colDocumentation": "Documentation",
+    "classifiedCampaign": "Classified Campaign",
+    "transactionHash": "Transaction #",
+    "btnReceipt": "Receipt",
+    "contributions": "contributions"
   },
   "campaignDetail": {
     "verifying": "Verifying Registry...",
@@ -248,5 +255,47 @@
     "storyPlaceholder2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "campaignUpdates": "Campaign Updates",
     "noUpdates": "No updates posted yet. Check back later to see the impact of this campaign!"
+  },
+  "userLayout": {
+    "brand": "Gestion Charité",
+    "donorDashboard": "Donor Dashboard",
+    "navProfile": "Profile",
+    "navMyImpact": "My Impact",
+    "navImpactReport": "Impact Report",
+    "navPublicFeed": "Public Feed",
+    "navHelpCenter": "Help Center",
+    "navSecureLogout": "Secure Logout",
+    "searchPlaceholder": "Search activities...",
+    "donorPortal": "Donor Portal"
+  },
+  "userProfile": {
+    "loading": "Loading secure profile...",
+    "errLoad": "Failed to load profile data.",
+    "successUpdate": "Profile updated successfully!",
+    "errUpdate": "Failed to update profile.",
+    "verified": "Verified",
+    "accountNum": "Account #",
+    "lifetimeImpact": "Lifetime Impact",
+    "pending": "Pending...",
+    "personalDetails": "Personal Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "phonePlaceholder": "+212 (0) 6...",
+    "notificationPrefs": "Notification Preferences",
+    "emailUpdates": "Email Updates",
+    "emailDesc": "Receive monthly impact reports.",
+    "securitySettings": "Security Settings",
+    "changePassword": "Change Password",
+    "twoFactor": "Two-Factor Auth",
+    "enabled": "Enabled",
+    "taxDocs": "Tax Documents",
+    "taxDesc": "Download your consolidated tax-deductible receipt.",
+    "btnDownloadPdf": "Download PDF",
+    "unsavedChanges": "Unsaved changes will be lost.",
+    "btnDiscard": "Discard",
+    "btnSaving": "Saving...",
+    "btnSave": "Save Changes"
   }
 }
