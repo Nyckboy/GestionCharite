@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { CharityAction, PageResponse } from '../../types';
+import { useTranslation } from 'react-i18next';
 
 const AdminCampaigns = () => {
+  const { t } = useTranslation(); // <-- Initialize hook
   const [campaigns, setCampaigns] = useState<CharityAction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,24 +46,22 @@ const AdminCampaigns = () => {
     <div className="space-y-8 font-['Inter',sans-serif]">
       <div>
         <h2 className="text-3xl font-bold tracking-tight text-[#002045]">
-          Global Campaign Directory
+          {t('adminCampaigns.title')}
         </h2>
-        <p className="mt-1 text-sm font-medium text-[#74777f]">
-          Master registry of all active charity actions across the platform.
-        </p>
+        <p className="mt-1 text-sm font-medium text-[#74777f]">{t('adminCampaigns.subtitle')}</p>
       </div>
 
       <div className="flex flex-col overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
         {isLoading ? (
           <div className="animate-pulse p-16 text-center font-bold text-[#43474e]">
-            Querying global database...
+            {t('adminCampaigns.loading')}
           </div>
         ) : campaigns.length === 0 ? (
           <div className="flex flex-col items-center justify-center bg-[#f5faff] p-16 text-center">
             <span className="material-symbols-outlined mb-4 text-5xl text-[#c4c6cf]">
               folder_off
             </span>
-            <p className="mb-1 text-lg font-bold text-[#002045]">No campaigns active.</p>
+            <p className="mb-1 text-lg font-bold text-[#002045]">{t('adminCampaigns.empty')}</p>
           </div>
         ) : (
           <>
@@ -70,19 +70,19 @@ const AdminCampaigns = () => {
                 <thead>
                   <tr className="border-b border-[#dee3e8] bg-[#eff4f9]">
                     <th className="w-16 px-6 py-4 text-xs font-bold tracking-wider text-[#43474e] uppercase">
-                      ID
+                      {t('adminCampaigns.colId')}
                     </th>
                     <th className="px-6 py-4 text-xs font-bold tracking-wider text-[#43474e] uppercase">
-                      Campaign Identity
+                      {t('adminCampaigns.colIdentity')}
                     </th>
                     <th className="px-6 py-4 text-xs font-bold tracking-wider text-[#43474e] uppercase">
-                      Category
+                      {t('adminCampaigns.colCategory')}
                     </th>
                     <th className="px-6 py-4 text-xs font-bold tracking-wider text-[#43474e] uppercase">
-                      Funding Progress
+                      {t('adminCampaigns.colProgress')}
                     </th>
                     <th className="px-6 py-4 text-right text-xs font-bold tracking-wider text-[#43474e] uppercase">
-                      Audit
+                      {t('adminCampaigns.colAudit')}
                     </th>
                   </tr>
                 </thead>
@@ -130,7 +130,7 @@ const AdminCampaigns = () => {
                             <span className="material-symbols-outlined text-[16px]">
                               open_in_new
                             </span>
-                            View Live
+                            {t('adminCampaigns.btnView')}
                           </Link>
                         </td>
                       </tr>
@@ -143,9 +143,10 @@ const AdminCampaigns = () => {
             {/* Pagination Controls */}
             <div className="flex items-center justify-between border-t border-[#dee3e8] bg-[#f5faff] px-6 py-4">
               <span className="text-xs font-semibold text-[#74777f]">
-                Showing page <span className="font-bold text-[#002045]">{currentPage + 1}</span> of{' '}
-                <span className="font-bold text-[#002045]">{totalPages}</span> ({totalElements}{' '}
-                total)
+                {t('pagination.showingPage')}{' '}
+                <span className="font-bold text-[#002045]">{currentPage + 1}</span>{' '}
+                {t('pagination.of')} <span className="font-bold text-[#002045]">{totalPages}</span>{' '}
+                ({totalElements} {t('pagination.total')})
               </span>
               <div className="flex gap-2">
                 <button
@@ -153,14 +154,16 @@ const AdminCampaigns = () => {
                   disabled={currentPage === 0}
                   className="flex items-center gap-1 rounded-lg border border-[#c4c6cf] bg-white px-3 py-1.5 text-xs font-bold text-[#43474e] transition-colors hover:bg-[#eff4f9] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-[14px]">chevron_left</span> Prev
+                  <span className="material-symbols-outlined text-[14px]">chevron_left</span>{' '}
+                  {t('pagination.prev')}
                 </button>
                 <button
                   onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
                   disabled={currentPage >= totalPages - 1 || totalPages === 0}
                   className="flex items-center gap-1 rounded-lg border border-[#c4c6cf] bg-white px-3 py-1.5 text-xs font-bold text-[#43474e] transition-colors hover:bg-[#eff4f9] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Next <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+                  {t('pagination.next')}{' '}
+                  <span className="material-symbols-outlined text-[14px]">chevron_right</span>
                 </button>
               </div>
             </div>

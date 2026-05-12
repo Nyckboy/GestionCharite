@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '../../api/axios';
 import type { AdminStats } from '../../types';
+import { useTranslation } from 'react-i18next';
 
 const AdminOverview = () => {
+  const { t } = useTranslation(); // <-- Initialize hook
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,7 +25,7 @@ const AdminOverview = () => {
   if (isLoading) {
     return (
       <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
-        Gathering platform analytics...
+        {t('adminOverview.gatheringAnalytics')}
       </div>
     );
   }
@@ -39,9 +41,11 @@ const AdminOverview = () => {
   return (
     <div className="space-y-8 font-['Inter',sans-serif]">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight text-[#002045]">Platform Overview</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-[#002045]">
+          {t('adminOverview.platformOverview')}
+        </h2>
         <p className="mt-1 text-sm font-medium text-[#74777f]">
-          High-level metrics and system health monitoring.
+          {t('adminOverview.platformSubtitle')}
         </p>
       </div>
 
@@ -51,7 +55,7 @@ const AdminOverview = () => {
           <div className="absolute top-0 left-0 h-full w-1 bg-[#38a169]"></div>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
-              Global Capital Raised
+              {t('adminOverview.globalCapitalRaised')}
             </span>
             <span className="material-symbols-outlined text-xl text-[#38a169]">payments</span>
           </div>
@@ -65,7 +69,7 @@ const AdminOverview = () => {
           <div className="absolute top-0 left-0 h-full w-1 bg-[#002045]"></div>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
-              Active Campaigns
+              {t('adminOverview.activeCampaigns')}
             </span>
             <span className="material-symbols-outlined text-xl text-[#002045]">public</span>
           </div>
@@ -76,7 +80,7 @@ const AdminOverview = () => {
           <div className="absolute top-0 left-0 h-full w-1 bg-[#b45309]"></div>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
-              Pending Validations
+              {t('adminOverview.pendingValidations')}
             </span>
             <span className="material-symbols-outlined text-xl text-[#b45309]">
               pending_actions
@@ -89,7 +93,7 @@ const AdminOverview = () => {
           <div className="absolute top-0 left-0 h-full w-1 bg-[#004881]"></div>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
-              Registered Users
+              {t('adminOverview.registeredUsers')}
             </span>
             <span className="material-symbols-outlined text-xl text-[#004881]">group</span>
           </div>
@@ -99,7 +103,7 @@ const AdminOverview = () => {
 
       <div className="rounded-2xl border border-[#dee3e8] bg-white p-6 shadow-sm lg:p-8">
         <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-[#002045]">
-          <span className="material-symbols-outlined">dns</span> System Status
+          <span className="material-symbols-outlined">dns</span> {t('adminOverview.systemStatus')}
         </h3>
         <div className="flex items-center gap-3 rounded-xl border border-[#bbf7d0] bg-[#f0fdf4] p-4">
           <span className="relative flex h-3 w-3">
@@ -107,9 +111,11 @@ const AdminOverview = () => {
             <span className="relative inline-flex h-3 w-3 rounded-full bg-[#38a169]"></span>
           </span>
           <div>
-            <p className="text-sm font-bold text-[#166534]">All Systems Operational</p>
+            <p className="text-sm font-bold text-[#166534]">
+              {t('adminOverview.systemsOperational')}
+            </p>
             <p className="text-xs font-semibold text-[#166534]/70">
-              Database, authentication, and payment gateways are functioning normally.
+              {t('adminOverview.systemsNormal')}
             </p>
           </div>
         </div>
