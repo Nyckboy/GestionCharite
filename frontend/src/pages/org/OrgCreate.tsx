@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import { getErrorMessage } from '../../utils/errorHandler';
 
 const OrgCreate = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [orgForm, setOrgForm] = useState({
@@ -23,7 +25,7 @@ const OrgCreate = () => {
       await apiClient.post('/organizations', orgForm);
       navigate('/organization/list');
     } catch (err) {
-      setError(getErrorMessage(err) || 'Failed to submit organization.');
+      setError(getErrorMessage(err) || t('orgCreate.errSubmit'));
       setIsLoading(false);
     }
   };
@@ -34,16 +36,14 @@ const OrgCreate = () => {
         to="/organization/list"
         className="inline-flex items-center gap-2 text-sm font-bold text-[#002045] hover:underline"
       >
-        <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to
-        Organizations
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>{' '}
+        {t('orgCreate.backToOrgs')}
       </Link>
 
       <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
         <div className="border-b border-[#dee3e8] bg-[#f5faff]/50 px-8 py-6">
-          <h2 className="text-2xl font-bold text-[#002045]">Register Organization</h2>
-          <p className="mt-1 text-sm font-medium text-[#74777f]">
-            Submit your non-profit entity for platform verification.
-          </p>
+          <h2 className="text-2xl font-bold text-[#002045]">{t('orgCreate.title')}</h2>
+          <p className="mt-1 text-sm font-medium text-[#74777f]">{t('orgCreate.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 p-8">
@@ -55,11 +55,11 @@ const OrgCreate = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Organization Name
+              {t('orgCreate.orgNameLabel')}
             </label>
             <input
               type="text"
-              placeholder="e.g. Global Water Initiative"
+              placeholder={t('orgCreate.orgNamePlaceholder')}
               value={orgForm.name}
               onChange={(e) => setOrgForm({ ...orgForm, name: e.target.value })}
               required
@@ -69,11 +69,11 @@ const OrgCreate = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Legal Address
+              {t('orgCreate.legalAddressLabel')}
             </label>
             <input
               type="text"
-              placeholder="Full registered address"
+              placeholder={t('orgCreate.legalAddressPlaceholder')}
               value={orgForm.legalAddress}
               onChange={(e) => setOrgForm({ ...orgForm, legalAddress: e.target.value })}
               required
@@ -84,11 +84,11 @@ const OrgCreate = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Tax Identification Number
+                {t('orgCreate.taxIdLabel')}
               </label>
               <input
                 type="text"
-                placeholder="Tax ID / Registration Number"
+                placeholder={t('orgCreate.taxIdPlaceholder')}
                 value={orgForm.taxIdentificationNumber}
                 onChange={(e) =>
                   setOrgForm({ ...orgForm, taxIdentificationNumber: e.target.value })
@@ -99,11 +99,11 @@ const OrgCreate = () => {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Primary Contact Email
+                {t('orgCreate.contactEmailLabel')}
               </label>
               <input
                 type="email"
-                placeholder="contact@organization.org"
+                placeholder={t('orgCreate.contactEmailPlaceholder')}
                 value={orgForm.primaryContact}
                 onChange={(e) => setOrgForm({ ...orgForm, primaryContact: e.target.value })}
                 required
@@ -114,10 +114,10 @@ const OrgCreate = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Mission Description
+              {t('orgCreate.missionLabel')}
             </label>
             <textarea
-              placeholder="Briefly describe the primary mission and activities of the organization."
+              placeholder={t('orgCreate.missionPlaceholder')}
               value={orgForm.description}
               onChange={(e) => setOrgForm({ ...orgForm, description: e.target.value })}
               required
@@ -132,7 +132,7 @@ const OrgCreate = () => {
               disabled={isLoading}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 font-bold text-white transition-all hover:bg-[#1a365d] active:scale-[0.99] disabled:opacity-50"
             >
-              {isLoading ? 'Submitting for Verification...' : 'Submit Organization'}
+              {isLoading ? t('orgCreate.btnSubmitting') : t('orgCreate.btnSubmit')}
               {!isLoading && <span className="material-symbols-outlined">send</span>}
             </button>
           </div>

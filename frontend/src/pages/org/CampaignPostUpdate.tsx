@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import { getErrorMessage } from '../../utils/errorHandler';
 
 const CampaignPostUpdate = () => {
   const navigate = useNavigate();
   const { id: orgId, actionId } = useParams();
+  const { t } = useTranslation();
 
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +22,7 @@ const CampaignPostUpdate = () => {
       await apiClient.post(`/actions/${actionId}/updates`, { message });
       navigate(`/organization/${orgId}/campaigns`);
     } catch (err) {
-      setError(getErrorMessage(err) || 'Failed to post update.');
+      setError(getErrorMessage(err) || t('campaignUpdate.errPost'));
       setIsLoading(false);
     }
   };
@@ -31,7 +33,8 @@ const CampaignPostUpdate = () => {
         to={`/organization/${orgId}/campaigns`}
         className="inline-flex items-center gap-2 text-sm font-bold text-[#002045] hover:underline"
       >
-        <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to Campaigns
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>{' '}
+        {t('campaignUpdate.backToCampaigns')}
       </Link>
 
       <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-sm">
@@ -40,9 +43,9 @@ const CampaignPostUpdate = () => {
             <span className="material-symbols-outlined text-[#002045]">campaign</span>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-[#002045]">Post an Update</h2>
+            <h2 className="text-2xl font-bold text-[#002045]">{t('campaignUpdate.title')}</h2>
             <p className="mt-1 text-sm font-medium text-[#74777f]">
-              Keep donors informed about milestones and impact.
+              {t('campaignUpdate.subtitle')}
             </p>
           </div>
         </div>
@@ -56,7 +59,7 @@ const CampaignPostUpdate = () => {
 
           <div className="space-y-2">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Update Message
+              {t('campaignUpdate.messageLabel')}
             </label>
             <textarea
               value={message}
@@ -64,10 +67,10 @@ const CampaignPostUpdate = () => {
               required
               rows={6}
               className="w-full resize-none rounded-xl border-none bg-[#eff4f9] px-5 py-4 text-sm font-medium text-[#171c20] outline-none focus:ring-2 focus:ring-[#002045]"
-              placeholder="e.g., We have officially purchased the supplies! Thank you to all our donors..."
+              placeholder={t('campaignUpdate.messagePlaceholder')}
             ></textarea>
             <p className="text-right text-xs font-semibold text-[#74777f]">
-              This will be visible on the public campaign page.
+              {t('campaignUpdate.visibilityNote')}
             </p>
           </div>
 
@@ -77,7 +80,7 @@ const CampaignPostUpdate = () => {
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 font-bold text-white transition-all hover:bg-[#1a365d] active:scale-[0.99] disabled:opacity-50"
           >
             <span className="material-symbols-outlined">send</span>
-            {isLoading ? 'Publishing...' : 'Publish Update'}
+            {isLoading ? t('campaignUpdate.btnPublishing') : t('campaignUpdate.btnPublish')}
           </button>
         </form>
       </div>

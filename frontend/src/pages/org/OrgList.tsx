@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import type { Organization } from '../../types';
 import { getErrorMessage } from '../../utils/errorHandler';
 
 const OrgList = () => {
+  const { t } = useTranslation();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,51 +26,44 @@ const OrgList = () => {
   };
 
   const handleDelete = async (orgId: number) => {
-    const isConfirmed = window.confirm(
-      'Are you sure you want to delete this organization? All associated campaigns will be removed.',
-    );
+    const isConfirmed = window.confirm(t('orgList.confirmDelete'));
     if (!isConfirmed) return;
 
     try {
       await apiClient.delete(`/organizations/${orgId}`);
       setOrganizations((prev) => prev.filter((org) => org.id !== orgId));
     } catch (err) {
-      alert(getErrorMessage(err) || 'Failed to delete organization.');
+      alert(getErrorMessage(err) || t('orgList.errDelete'));
     }
   };
 
   return (
     <div className="space-y-8 font-['Inter',sans-serif]">
-      {/* Page Header */}
       <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-[#002045]">Your Organizations</h2>
-          <p className="mt-1 text-sm font-medium text-[#74777f]">
-            Manage your registered non-profits and launch campaigns.
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight text-[#002045]">{t('orgList.title')}</h2>
+          <p className="mt-1 text-sm font-medium text-[#74777f]">{t('orgList.subtitle')}</p>
         </div>
         <Link
           to="/organization/new"
           className="flex items-center gap-2 rounded-xl bg-[#002045] px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#1a365d] active:scale-95"
         >
           <span className="material-symbols-outlined text-[20px]">add_business</span>
-          Register Organization
+          {t('orgList.btnRegister')}
         </Link>
       </div>
 
       {isLoading ? (
         <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
-          Retrieving organization records...
+          {t('orgList.loading')}
         </div>
       ) : organizations.length === 0 ? (
         <div className="flex flex-col items-center rounded-xl border border-[#dee3e8] bg-white p-16 text-center shadow-sm">
           <span className="material-symbols-outlined mb-4 text-5xl text-[#c4c6cf]">
             domain_disabled
           </span>
-          <p className="mb-1 text-lg font-bold text-[#171c20]">No organizations registered.</p>
-          <p className="text-sm text-[#74777f]">
-            Create your first organization to start launching impact campaigns.
-          </p>
+          <p className="mb-1 text-lg font-bold text-[#171c20]">{t('orgList.noOrgs')}</p>
+          <p className="text-sm text-[#74777f]">{t('orgList.noOrgsDesc')}</p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -89,7 +84,7 @@ const OrgList = () => {
                         : 'border-[#fde68a] bg-[#fffbeb] text-[#b45309]'
                     }`}
                   >
-                    {org.isValidated ? 'Approved' : 'Pending'}
+                    {org.isValidated ? t('orgList.statusApproved') : t('orgList.statusPending')}
                   </span>
                 </div>
                 <p className="mb-6 line-clamp-3 text-sm leading-relaxed text-[#43474e]">
@@ -100,7 +95,8 @@ const OrgList = () => {
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#74777f]">
                     <span className="material-symbols-outlined text-[16px]">receipt_long</span>
                     <span>
-                      Tax ID: <span className="text-[#171c20]">{org.taxIdentificationNumber}</span>
+                      {t('orgList.taxId')}{' '}
+                      <span className="text-[#171c20]">{org.taxIdentificationNumber}</span>
                     </span>
                   </div>
                 </div>
@@ -116,7 +112,7 @@ const OrgList = () => {
                       <span className="material-symbols-outlined text-[18px]">
                         format_list_bulleted
                       </span>
-                      Manage Campaigns
+                      {t('orgList.btnManageCampaigns')}
                     </Link>
                     <Link
                       to={`/organization/${org.id}/campaign/new`}
@@ -124,29 +120,30 @@ const OrgList = () => {
                       className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#48bb78] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[#38a169]"
                     >
                       <span className="material-symbols-outlined text-[18px]">add_circle</span>
-                      Create Campaign
+                      {t('orgList.btnCreateCampaign')}
                     </Link>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-[#dee3e8] bg-[#f5faff] p-3 text-sm font-semibold text-[#74777f]">
                     <span className="material-symbols-outlined text-[18px]">hourglass_empty</span>
-                    Awaiting Verification
+                    {t('orgList.awaitingVerification')}
                   </div>
                 )}
 
-                {/* Management Actions */}
                 <div className="mt-4 flex gap-3">
                   <Link
                     to={`/organization/${org.id}/edit`}
                     className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#c4c6cf] bg-white px-3 py-2 text-xs font-bold text-[#43474e] transition-colors hover:bg-[#f5faff]"
                   >
-                    <span className="material-symbols-outlined text-[14px]">edit</span> Edit
+                    <span className="material-symbols-outlined text-[14px]">edit</span>{' '}
+                    {t('orgList.btnEdit')}
                   </Link>
                   <button
                     onClick={() => handleDelete(org.id)}
                     className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-[#ffdad6]/30 px-3 py-2 text-xs font-bold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/70"
                   >
-                    <span className="material-symbols-outlined text-[14px]">delete</span> Delete
+                    <span className="material-symbols-outlined text-[14px]">delete</span>{' '}
+                    {t('orgList.btnDelete')}
                   </button>
                 </div>
               </div>

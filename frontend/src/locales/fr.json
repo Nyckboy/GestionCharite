@@ -1,0 +1,11 @@
+{
+  "sidebar": {
+    "dashboard": "Tableau de bord",
+    "campaigns": "Campagnes globales",
+    "logout": "Déconnexion sécurisée"
+  },
+  "admin": {
+    "overviewTitle": "Aperçu de la plateforme",
+    "totalRaised": "Total Récolté"
+  }
+}

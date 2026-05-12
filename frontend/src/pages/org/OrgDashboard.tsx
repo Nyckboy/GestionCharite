@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import type { OrgAdminStats, CharityAction } from '../../types';
 
 const OrgDashboard = () => {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<OrgAdminStats | null>(null);
   const [campaigns, setCampaigns] = useState<CharityAction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +32,7 @@ const OrgDashboard = () => {
   if (isLoading) {
     return (
       <div className="animate-pulse py-24 text-center font-bold text-[#43474e]">
-        Compiling organizational metrics...
+        {t('orgDashboard.loading')}
       </div>
     );
   }
@@ -39,30 +41,27 @@ const OrgDashboard = () => {
 
   return (
     <div className="space-y-8 font-['Inter',sans-serif]">
-      {/* Header & CTA Section */}
       <div className="mb-2 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-[#002045]">Campaign Management</h1>
-          <p className="mt-1 text-sm font-medium text-[#74777f]">
-            Track, manage, and optimize your global impact initiatives.
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-[#002045]">
+            {t('orgDashboard.title')}
+          </h1>
+          <p className="mt-1 text-sm font-medium text-[#74777f]">{t('orgDashboard.subtitle')}</p>
         </div>
         <Link
           to="/organization/list"
           className="flex items-center gap-2 rounded-xl bg-[#002045] px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#1a365d] active:scale-95"
         >
           <span className="material-symbols-outlined text-[20px]">account_balance</span>
-          Manage Organizations
+          {t('orgDashboard.btnManageOrgs')}
         </Link>
       </div>
 
-      {/* Metrics Overview */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {/* Metric 1 */}
         <div className="rounded-xl border border-[#dee3e8] bg-white p-6 shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
           <div className="mb-4 flex items-center justify-between">
             <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
-              Total Raised
+              {t('orgDashboard.totalRaised')}
             </span>
             <div className="rounded-lg bg-[#d6e3ff] p-2 text-[#004881]">
               <span className="material-symbols-outlined text-lg">payments</span>
@@ -70,19 +69,18 @@ const OrgDashboard = () => {
           </div>
           <div className="text-3xl font-bold text-[#002045]">
             {displayStats.totalRaised.toLocaleString()}{' '}
-            <span className="text-lg text-[#74777f]">MAD</span>
+            <span className="text-lg text-[#74777f]">{t('orgDashboard.currency')}</span>
           </div>
           <div className="mt-3 flex items-center gap-1 text-xs font-bold text-[#006d3c]">
-            <span className="material-symbols-outlined text-[14px]">trending_up</span> Active
-            tracking
+            <span className="material-symbols-outlined text-[14px]">trending_up</span>{' '}
+            {t('orgDashboard.activeTracking')}
           </div>
         </div>
 
-        {/* Metric 2 */}
         <div className="rounded-xl border border-[#dee3e8] bg-white p-6 shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
           <div className="mb-4 flex items-center justify-between">
             <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
-              My Campaigns
+              {t('orgDashboard.myCampaigns')}
             </span>
             <div className="rounded-lg bg-[#85f6ad]/20 p-2 text-[#006d3c]">
               <span className="material-symbols-outlined text-lg">rocket_launch</span>
@@ -90,15 +88,15 @@ const OrgDashboard = () => {
           </div>
           <div className="text-3xl font-bold text-[#002045]">{displayStats.totalCampaigns}</div>
           <div className="mt-3 flex items-center gap-1 text-xs font-bold text-[#74777f]">
-            <span className="material-symbols-outlined text-[14px]">schedule</span> Ongoing missions
+            <span className="material-symbols-outlined text-[14px]">schedule</span>{' '}
+            {t('orgDashboard.ongoingMissions')}
           </div>
         </div>
 
-        {/* Metric 3 */}
         <div className="rounded-xl border border-[#dee3e8] bg-white p-6 shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
           <div className="mb-4 flex items-center justify-between">
             <span className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
-              Registered Charities
+              {t('orgDashboard.registeredCharities')}
             </span>
             <div className="rounded-lg bg-[#e4e9ee] p-2 text-[#171c20]">
               <span className="material-symbols-outlined text-lg">account_balance</span>
@@ -106,18 +104,18 @@ const OrgDashboard = () => {
           </div>
           <div className="text-3xl font-bold text-[#002045]">{displayStats.totalOrganizations}</div>
           <div className="mt-3 flex items-center gap-1 text-xs font-bold text-[#74777f]">
-            <span className="material-symbols-outlined text-[14px]">verified</span> Verified
-            entities
+            <span className="material-symbols-outlined text-[14px]">verified</span>{' '}
+            {t('orgDashboard.verifiedEntities')}
           </div>
         </div>
       </div>
 
-      {/* Two Column Layout: Campaigns & Creation Form */}
       <div className="grid grid-cols-1 items-start gap-8 xl:grid-cols-3">
-        {/* Left Col: Campaign List (Bento Grid) */}
         <div className="space-y-4 xl:col-span-2">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-[#002045]">Active Campaigns</h3>
+            <h3 className="text-lg font-bold text-[#002045]">
+              {t('orgDashboard.activeCampaigns')}
+            </h3>
           </div>
 
           {campaigns.length === 0 ? (
@@ -125,10 +123,8 @@ const OrgDashboard = () => {
               <span className="material-symbols-outlined mb-4 text-4xl text-[#c4c6cf]">
                 campaign
               </span>
-              <p className="mb-1 font-bold text-[#171c20]">No campaigns active.</p>
-              <p className="text-sm text-[#74777f]">
-                Create an organization to launch your first initiative.
-              </p>
+              <p className="mb-1 font-bold text-[#171c20]">{t('orgDashboard.noCampaigns')}</p>
+              <p className="text-sm text-[#74777f]">{t('orgDashboard.noCampaignsDesc')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -151,7 +147,7 @@ const OrgDashboard = () => {
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-xs font-bold tracking-widest text-[#74777f] uppercase">
-                          No Media
+                          {t('orgDashboard.noMedia')}
                         </div>
                       )}
                       <div className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold tracking-wider text-[#006d3c] uppercase shadow-sm backdrop-blur">
@@ -168,7 +164,9 @@ const OrgDashboard = () => {
 
                       <div className="mt-auto space-y-3">
                         <div className="flex justify-between text-xs font-bold">
-                          <span className="text-[#43474e]">Raised: {campaign.currentAmount}</span>
+                          <span className="text-[#43474e]">
+                            {t('orgDashboard.raised')}: {campaign.currentAmount}
+                          </span>
                           <span className="text-[#002045]">{progress.toFixed(0)}%</span>
                         </div>
                         <div className="h-2 w-full overflow-hidden rounded-full bg-[#eff4f9]">
@@ -179,14 +177,15 @@ const OrgDashboard = () => {
                         </div>
                         <div className="flex items-center justify-between pt-2">
                           <span className="text-xs font-bold text-[#74777f]">
-                            Target: {campaign.targetAmount} MAD
+                            {t('orgDashboard.target')}: {campaign.targetAmount}{' '}
+                            {t('orgDashboard.currency')}
                           </span>
                           <Link
                             to={`/organization/${campaign.organizationId}/campaign/${campaign.id}/edit`}
                             className="flex items-center gap-1 rounded-lg bg-[#eff4f9] px-3 py-1.5 text-xs font-bold text-[#002045] transition-colors hover:bg-[#d6e3ff]"
                           >
                             <span className="material-symbols-outlined text-[14px]">edit</span>
-                            Edit
+                            {t('orgDashboard.btnEdit')}
                           </Link>
                         </div>
                       </div>
@@ -198,43 +197,42 @@ const OrgDashboard = () => {
           )}
         </div>
 
-        {/* Right Col: Placeholder Creation Form (Greyed out per rule) */}
         <div className="pointer-events-none opacity-50 grayscale select-none xl:col-span-1">
           <div className="sticky top-24 rounded-xl border border-[#dee3e8] bg-white p-6 shadow-sm">
             <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-[#002045]">
               <span className="material-symbols-outlined text-[#002045]">add_box</span>
-              Quick Draft
+              {t('orgDashboard.quickDraft')}
             </h3>
             <div className="space-y-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                  Campaign Title
+                  {t('orgDashboard.campaignTitle')}
                 </label>
                 <input
                   disabled
                   className="w-full rounded-lg border-0 bg-[#eff4f9] px-4 py-3 text-sm font-medium"
-                  placeholder="e.g. Winter Relief Fund"
+                  placeholder={t('orgDashboard.draftPlaceholder')}
                   type="text"
                 />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                  Category
+                  {t('orgDashboard.category')}
                 </label>
                 <select
                   disabled
                   className="w-full appearance-none rounded-lg border-0 bg-[#eff4f9] px-4 py-3 text-sm font-medium"
                 >
-                  <option>Healthcare</option>
+                  <option>{t('orgDashboard.healthcare')}</option>
                 </select>
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                  Target Amount
+                  {t('orgDashboard.targetAmount')}
                 </label>
                 <div className="relative">
                   <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold text-[#74777f]">
-                    MAD
+                    {t('orgDashboard.currency')}
                   </span>
                   <input
                     disabled
@@ -249,10 +247,11 @@ const OrgDashboard = () => {
                   disabled
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 text-sm font-bold text-white"
                 >
-                  <span className="material-symbols-outlined">publish</span> Publish Campaign
+                  <span className="material-symbols-outlined">publish</span>{' '}
+                  {t('orgDashboard.btnPublish')}
                 </button>
                 <p className="mt-4 text-center text-xs font-semibold text-[#74777f]">
-                  Drafts sync automatically.
+                  {t('orgDashboard.draftSync')}
                 </p>
               </div>
             </div>

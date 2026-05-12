@@ -2,19 +2,21 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { CharityAction, Category, PageResponse } from '../../types';
+import { useTranslation } from 'react-i18next';
 
-const categories: { label: string; value: Category | 'ALL' }[] = [
-  { label: 'All Causes', value: 'ALL' },
-  { label: 'Education', value: 'EDUCATION' },
-  { label: 'Environment', value: 'ENVIRONNEMENT' },
-  { label: 'Health', value: 'SANTE' },
-  { label: 'Emergency', value: 'URGENCE' },
+const categories: { labelKey: string; value: Category | 'ALL' }[] = [
+  { labelKey: 'publicFeed.catAll', value: 'ALL' },
+  { labelKey: 'publicFeed.catEdu', value: 'EDUCATION' },
+  { labelKey: 'publicFeed.catEnv', value: 'ENVIRONNEMENT' },
+  { labelKey: 'publicFeed.catHealth', value: 'SANTE' },
+  { labelKey: 'publicFeed.catEmergency', value: 'URGENCE' },
 ];
 
 const PublicFeed = () => {
   const [campaigns, setCampaigns] = useState<CharityAction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<Category | 'ALL'>('ALL');
+  const { t } = useTranslation();
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(0);
@@ -78,19 +80,16 @@ const PublicFeed = () => {
         </div>
         <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 text-white">
           <div className="max-w-2xl">
-            <h1 className="mb-6 text-5xl font-bold tracking-tight">
-              Empowering transparent giving for lasting impact.
-            </h1>
+            <h1 className="mb-6 text-5xl font-bold tracking-tight">{t('publicFeed.heroTitle')}</h1>
             <p className="mb-8 text-lg leading-relaxed text-white/90">
-              Join a global network of donors and non-profits dedicated to measurable change. Every
-              donation is tracked, every milestone celebrated.
+              {t('publicFeed.heroSubtitle')}
             </p>
             <div className="flex gap-4">
               <button className="rounded-xl bg-[#48bb78] px-8 py-3 font-semibold text-white shadow-lg transition-all hover:bg-[#38a169] active:scale-95">
-                Explore Campaigns
+                {t('publicFeed.btnExplore')}
               </button>
               <button className="rounded-xl border border-white/20 bg-white/10 px-8 py-3 font-semibold backdrop-blur-md transition-all hover:bg-white/20">
-                How it Works
+                {t('publicFeed.btnHowItWorks')}
               </button>
             </div>
           </div>
@@ -111,7 +110,7 @@ const PublicFeed = () => {
                     : 'border border-[#c4c6cf] bg-white text-[#43474e] hover:border-[#002045] hover:text-[#002045]'
                 }`}
               >
-                {cat.label}
+                {t(cat.labelKey)}
               </button>
             ))}
           </div>
@@ -132,10 +131,8 @@ const PublicFeed = () => {
             <span className="material-symbols-outlined mb-4 text-6xl text-[#c4c6cf]">
               search_off
             </span>
-            <h3 className="mb-2 text-xl font-bold text-[#002045]">No campaigns found</h3>
-            <p className="text-[#74777f]">
-              There are currently no active campaigns in this category.
-            </p>
+            <h3 className="mb-2 text-xl font-bold text-[#002045]">{t('publicFeed.noCampaigns')}</h3>
+            <p className="text-[#74777f]">{t('publicFeed.noCampaignsSub')}</p>
           </div>
         ) : (
           <>
@@ -160,7 +157,7 @@ const PublicFeed = () => {
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-sm font-bold tracking-widest text-[#74777f] uppercase">
-                          No Media
+                          {t('publicFeed.noPreview')}
                         </div>
                       )}
                       <span className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold tracking-wider text-[#006d3c] uppercase shadow-sm backdrop-blur">
@@ -180,7 +177,7 @@ const PublicFeed = () => {
                         <div className="mb-3 flex items-end justify-between">
                           <div>
                             <p className="mb-0.5 text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                              Raised
+                              {t('publicFeed.raised')}
                             </p>
                             <span className="text-lg font-bold text-[#002045]">
                               {campaign.currentAmount.toLocaleString()} MAD
@@ -200,7 +197,7 @@ const PublicFeed = () => {
                           to={`/donate/${campaign.id}`}
                           className="block w-full rounded-xl bg-[#002045] py-3.5 text-center font-bold text-white transition-all hover:bg-[#1a365d] active:scale-[0.98]"
                         >
-                          Support Mission
+                          {t('publicFeed.supportMission')}
                         </Link>
                       </div>
                     </div>
@@ -218,10 +215,10 @@ const PublicFeed = () => {
                   className="flex items-center gap-2 rounded-xl border-2 border-[#002045] bg-transparent px-8 py-3.5 font-bold text-[#002045] transition-all hover:bg-[#002045] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isLoading ? (
-                    <>Loading...</>
+                    <>{t('publicFeed.btnLoading')}</>
                   ) : (
                     <>
-                      Load More Campaigns
+                      {t('publicFeed.btnLoadMore')}
                       <span className="material-symbols-outlined text-[20px]">expand_more</span>
                     </>
                   )}

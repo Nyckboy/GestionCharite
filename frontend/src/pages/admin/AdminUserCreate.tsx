@@ -3,11 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../api/axios';
 import type { PlatformUser } from '../../types';
 import { getErrorMessage } from '../../utils/errorHandler';
+import { useTranslation } from 'react-i18next';
 
 const AdminUserCreate = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -25,7 +27,7 @@ const AdminUserCreate = () => {
       await apiClient.post('/admin/users', formData);
       navigate('/admin/users');
     } catch (err) {
-      setError(getErrorMessage(err) || 'Failed to create user.');
+      setError(getErrorMessage(err) || t('adminUsers.errCreate'));
       setIsLoading(false);
     }
   };
@@ -36,16 +38,17 @@ const AdminUserCreate = () => {
         to="/admin/users"
         className="inline-flex items-center gap-2 text-sm font-bold text-[#002045] hover:underline"
       >
-        <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to Directory
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>{' '}
+        {t('adminUsers.backToDir')}
       </Link>
 
       <div className="overflow-hidden rounded-2xl border border-[#dee3e8] bg-white shadow-[0px_4px_6px_rgba(26,54,93,0.04)]">
         <div className="flex items-center gap-3 border-b border-[#dee3e8] bg-[#f5faff]/50 px-8 py-6">
           <span className="material-symbols-outlined text-2xl text-[#002045]">person_add</span>
           <div>
-            <h2 className="text-2xl font-bold text-[#002045]">Provision New Account</h2>
+            <h2 className="text-2xl font-bold text-[#002045]">{t('adminUsers.provisionTitle')}</h2>
             <p className="mt-1 text-sm font-medium text-[#74777f]">
-              Create a user and assign system privileges.
+              {t('adminUsers.provisionSubtitle')}
             </p>
           </div>
         </div>
@@ -60,7 +63,7 @@ const AdminUserCreate = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                First Name
+                {t('adminUsers.firstName')}
               </label>
               <input
                 type="text"
@@ -72,7 +75,7 @@ const AdminUserCreate = () => {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Last Name
+                {t('adminUsers.lastName')}
               </label>
               <input
                 type="text"
@@ -86,7 +89,7 @@ const AdminUserCreate = () => {
 
           <div className="space-y-1">
             <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              Email Address
+              {t('adminUsers.email')}
             </label>
             <input
               type="email"
@@ -100,7 +103,7 @@ const AdminUserCreate = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                Temporary Password
+                {t('adminUsers.tempPassword')}
               </label>
               <input
                 type="password"
@@ -112,7 +115,7 @@ const AdminUserCreate = () => {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold tracking-wider text-[#74777f] uppercase">
-                System Role
+                {t('adminUsers.sysRole')}
               </label>
               <select
                 value={formData.role}
@@ -121,9 +124,9 @@ const AdminUserCreate = () => {
                 }
                 className="w-full appearance-none rounded-lg border-none bg-[#eff4f9] px-4 py-3 text-sm font-medium text-[#171c20] outline-none focus:ring-2 focus:ring-[#002045]"
               >
-                <option value="USER">Standard User</option>
-                <option value="ORG_ADMIN">Organization Admin</option>
-                <option value="SUPER_ADMIN">Super Admin</option>
+                <option value="USER">{t('adminUsers.roleUser')}</option>
+                <option value="ORG_ADMIN">{t('adminUsers.roleOrgAdmin')}</option>
+                <option value="SUPER_ADMIN">{t('adminUsers.roleSuperAdmin')}</option>
               </select>
             </div>
           </div>
@@ -134,7 +137,7 @@ const AdminUserCreate = () => {
               disabled={isLoading}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#002045] py-4 font-bold text-white transition-all hover:bg-[#1a365d] active:scale-[0.99] disabled:opacity-50"
             >
-              {isLoading ? 'Provisioning...' : 'Provision Account'}
+              {isLoading ? t('adminUsers.btnProvisioning') : t('adminUsers.btnProvision')}
               {!isLoading && (
                 <span className="material-symbols-outlined text-[20px]">person_add</span>
               )}
