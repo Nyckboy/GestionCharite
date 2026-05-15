@@ -3,6 +3,7 @@ package com.project.GestionCharite.controllers;
 import com.project.GestionCharite.dto.PageResponse;
 import com.project.GestionCharite.dto.DonationDTOs.DonationRequest;
 import com.project.GestionCharite.dto.DonationDTOs.DonationResponse;
+import com.project.GestionCharite.dto.DonationDTOs.PaymentIntentResponse;
 import com.project.GestionCharite.services.DonationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -54,5 +55,14 @@ public class DonationController {
         @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok(donationService.getDonationsForAction(actionId, page, size));
+    }
+
+    @PostMapping("/intent")
+    public ResponseEntity<PaymentIntentResponse> createPaymentIntent(
+            @RequestBody DonationRequest request,
+            Authentication authentication) {
+        
+        String donorEmail = authentication.getName();
+        return ResponseEntity.ok(donationService.createPaymentIntent(request, donorEmail));
     }
 }

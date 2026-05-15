@@ -35,4 +35,13 @@ public class DonationDTOs {
         private LocalDateTime donationDate;
         private String message;
     }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PaymentIntentResponse {
+        private String clientSecret; // The magic string React needs to load the card fields
+        private Long donationId;
+    }
 }

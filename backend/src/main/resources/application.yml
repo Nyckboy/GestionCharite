@@ -15,6 +15,12 @@ jwt:
   secret: df442e1694c68fb5a281c4e0ffe003787955a1e396f72e0c086d122948103464 
   expiration: 86400000 # 1 day in milliseconds
 
+stripe:
+  # Your secret key from the Stripe Developer Dashboard
+  api-key: sk_test_your_secret_key_here
+  # We will generate this later when we set up the Webhook
+  webhook-secret: whsec_your_webhook_secret_here
+
 ---
 # ==========================================
 # 2. DEVELOPMENT PROFILE (H2 Database)
