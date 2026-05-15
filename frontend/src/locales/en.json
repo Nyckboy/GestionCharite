@@ -180,7 +180,11 @@
     "viewAll": "View All",
     "beFirst": "Be the first to support this cause!",
     "anonymous": "Anonymous",
-    "globalReach": "Global Reach"
+    "globalReach": "Global Reach",
+    "donationAmount":"Donation Amount",
+    "taxDeductible":"Tax-deductible contribution",
+    "viewOlderDonations": "View Older Donations",
+    "processingSecurely": "Processing Securely..."
   },
   "campaignEdit": {
     "editCampaign": "Edit Campaign",
