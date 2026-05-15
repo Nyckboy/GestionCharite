@@ -12,6 +12,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^6.3.0",
+    "@stripe/stripe-js": "^9.5.0",
     "@supabase/supabase-js": "^2.105.0",
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.15.0",

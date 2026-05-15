@@ -11,6 +11,9 @@ services:
         env_file:
             # Docker reads the temporary file Jenkins just made and passes it to Spring Boot
             - ./backend/.env
+        environment: # <--- ADD THESE TWO LINES
+            - STRIPE_API_KEY=${STRIPE_API_KEY}
+            - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
         restart: always
 
     frontend:
@@ -20,6 +23,7 @@ services:
             args: # Injecting the variables here!
                 VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
                 VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+                VITE_STRIPE_PUBLIC_KEY: ${VITE_STRIPE_PUBLIC_KEY}
         container_name: react_ui
         ports:
             - '3001:80'

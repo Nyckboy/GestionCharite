@@ -487,5 +487,15 @@
     "btnDelete": "Delete",
     "confirmDelete": "Are you sure you want to delete this organization? All associated campaigns will be removed.",
     "errDelete": "Failed to delete organization."
+  },
+  "stripe": {
+    "secureCheckout": "Secure Checkout",
+    "payNow": "Pay Now",
+    "processing": "Processing payment...",
+    "cancel": "Cancel / Go Back",
+    "successTitle": "Payment Successful!",
+    "successSubtitle": "Thank you for your generous donation. Your transaction has been securely processed and your impact is being recorded.",
+    "backToFeed": "Return to Campaigns",
+    "unexpectedError": "An unexpected error occurred."
   }
 }

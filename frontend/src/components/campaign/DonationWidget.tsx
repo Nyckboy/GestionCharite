@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // <-- Added
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
 import type { CharityAction, Donation } from '../../types';
 import { getErrorMessage } from '../../utils/errorHandler';
+
+// Stripe Imports
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutForm from './CheckoutForm';
+
+// Initialize Stripe outside the component so it doesn't recreate on every render
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
 
 interface DonationWidgetProps {
   campaign: CharityAction;
@@ -24,7 +32,8 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
   isLoadingMore,
 }) => {
   const { isAuthenticated, user } = useAuth();
-  const { t } = useTranslation(); // <-- Added
+  const { t } = useTranslation();
+
   const [amount, setAmount] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{
@@ -32,21 +41,25 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
     text: string;
   } | null>(null);
 
+  // NEW: State for Stripe Payment Intent
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+
   const progressPercentage = Math.min((campaign.currentAmount / campaign.targetAmount) * 100, 100);
 
-  const handleDonationSubmit = async (e: React.FormEvent) => {
+  // Updated to generate the intent instead of completing the donation
+  const handleIntentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setStatusMessage(null);
 
     try {
-      await apiClient.post('/donations', {
+      const response = await apiClient.post('/donations/intent', {
         amount: parseFloat(amount),
         actionId: campaign.id,
       });
-      setStatusMessage({ type: 'success', text: t('donationWidget.successMsg') });
-      setAmount('');
       onDonationSuccess();
+      // Backend should return { clientSecret: "pi_..." }
+      setClientSecret(response.data.clientSecret);
     } catch (error) {
       setStatusMessage({
         type: 'error',
@@ -55,6 +68,19 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Stripe Element customization to match our Corporate Modern theme
+  const stripeAppearance = {
+    theme: 'stripe' as const,
+    variables: {
+      colorPrimary: '#002045',
+      colorBackground: '#eff4f9',
+      colorText: '#171c20',
+      colorDanger: '#ba1a1a',
+      fontFamily: 'Inter, sans-serif',
+      borderRadius: '12px',
+    },
   };
 
   return (
@@ -114,38 +140,52 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
           </div>
         ) : (
           <div className="space-y-4">
-            <label className="block text-xs font-bold tracking-wider text-[#74777f] uppercase">
-              {t('donationWidget.donationAmount')}
-            </label>
-            <form onSubmit={handleDonationSubmit} className="space-y-4">
-              <div className="relative">
-                <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold text-[#74777f]">
-                  MAD
-                </span>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="1"
-                  required
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="w-full rounded-xl border-none bg-[#eff4f9] py-4 pr-4 pl-14 text-base font-bold text-[#171c20] transition-all outline-none focus:bg-white focus:ring-2 focus:ring-[#002045]"
-                  placeholder="100.00"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isSubmitting || !amount}
-                className="flex w-full items-center justify-center space-x-2 rounded-xl bg-[#48bb78] py-4 text-base font-bold text-white transition-all hover:bg-[#38a169] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            {/* If we have a clientSecret, show Stripe Checkout. Otherwise show amount input */}
+            {clientSecret ? (
+              <Elements
+                options={{ clientSecret, appearance: stripeAppearance }}
+                stripe={stripePromise}
               >
-                <span className="material-symbols-outlined text-[20px]">volunteer_activism</span>
-                <span>
-                  {isSubmitting
-                    ? t('donationWidget.processingSecurely')
-                    : t('donationWidget.btnDonate')}
-                </span>
-              </button>
-            </form>
+                <CheckoutForm onCancel={() => setClientSecret(null)} />
+              </Elements>
+            ) : (
+              <>
+                <label className="block text-xs font-bold tracking-wider text-[#74777f] uppercase">
+                  {t('donationWidget.donationAmount')}
+                </label>
+                <form onSubmit={handleIntentSubmit} className="space-y-4">
+                  <div className="relative">
+                    <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold text-[#74777f]">
+                      MAD
+                    </span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="1"
+                      required
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="w-full rounded-xl border-none bg-[#eff4f9] py-4 pr-4 pl-14 text-base font-bold text-[#171c20] transition-all outline-none focus:bg-white focus:ring-2 focus:ring-[#002045]"
+                      placeholder="100.00"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || !amount}
+                    className="flex w-full items-center justify-center space-x-2 rounded-xl bg-[#48bb78] py-4 text-base font-bold text-white transition-all hover:bg-[#38a169] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">
+                      volunteer_activism
+                    </span>
+                    <span>
+                      {isSubmitting
+                        ? t('donationWidget.processingSecurely')
+                        : t('donationWidget.btnDonate')}
+                    </span>
+                  </button>
+                </form>
+              </>
+            )}
             <p className="px-4 text-center text-[10px] font-bold tracking-widest text-[#74777f] uppercase">
               {t('donationWidget.taxDeductible')}
             </p>
@@ -223,7 +263,6 @@ const DonationWidget: React.FC<DonationWidgetProps> = ({
               );
             })
           )}
-
           {hasMore && (
             <div className="px-2 pt-2 pb-1">
               <button

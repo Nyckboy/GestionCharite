@@ -17,9 +17,9 @@ jwt:
 
 stripe:
   # Your secret key from the Stripe Developer Dashboard
-  api-key: sk_test_your_secret_key_here
+  api-key: ${STRIPE_API_KEY}
   # We will generate this later when we set up the Webhook
-  webhook-secret: whsec_your_webhook_secret_here
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET}
 
 ---
 # ==========================================

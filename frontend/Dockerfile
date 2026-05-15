@@ -7,10 +7,12 @@ WORKDIR /app
 # 1. Open the gates to accept variables from Docker Compose
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_ANON_KEY
+ARG VITE_STRIPE_PUBLIC_KEY 
 
 # 2. Lock them into the container's memory
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+ENV VITE_STRIPE_PUBLIC_KEY=$VITE_STRIPE_PUBLIC_KEY
 
 RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml* ./

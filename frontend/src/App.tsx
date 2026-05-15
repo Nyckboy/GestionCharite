@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-// import OrgDash from './pages/org/OrgDash';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import OrgLayout from './pages/org/OrgLayout';
@@ -12,6 +11,7 @@ import CampaignList from './pages/org/CampaignList';
 import PublicFeed from './pages/public/PublicFeed';
 import PublicLayout from './pages/public/PublicLayout';
 import CampaignDetail from './pages/public/CampaignDetail';
+import PaymentSuccess from './pages/public/PaymentSuccess';
 import CampaignPostUpdate from './pages/org/CampaignPostUpdate';
 import CampaignEdit from './pages/org/CampaignEdit';
 import OrgEdit from './pages/org/OrgEdit';
@@ -32,28 +32,24 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public & Auth Routes (No guards needed) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        {/* NESTED ROUTES FOR PUBLIC FACING PAGES */}
+
         <Route element={<PublicLayout />}>
           <Route path="/" element={<PublicFeed />} />
           <Route path="/donate/:actionId" element={<CampaignDetail />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
         </Route>
 
-        {/* Protected Routes for Standard Users */}
         <Route element={<ProtectedRoute allowedRoles={['USER']} />}>
           <Route path="/profile" element={<UserLayout />}>
             <Route index element={<UserProfile />} />
-            {/* <Route path="edit" element={<UserEditProfile />} /> */}
             <Route path="donations" element={<UserDonations />} />
           </Route>
         </Route>
 
-        {/* Protected Route for Organization Admins */}
         <Route element={<ProtectedRoute allowedRoles={['ORG_ADMIN']} />}>
           <Route path="/organization" element={<OrgLayout />}>
-            {/* Index maps to /organization exactly */}
             <Route index element={<OrgDashboard />} />
             <Route path="list" element={<OrgList />} />
             <Route path="new" element={<OrgCreate />} />
@@ -65,16 +61,11 @@ function App() {
           </Route>
         </Route>
 
-        {/* Protected Route for Super Admins */}
         <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']} />}>
           <Route path="/admin" element={<AdminLayout />}>
-            {/* The default dashboard overview */}
             <Route index element={<AdminOverview />} />
-            {/* The approvals page */}
             <Route path="approvals" element={<AdminOrgApprovals />} />
-            {/* Placeholders for future expansion */}
             <Route path="campaigns" element={<AdminCampaigns />} />
-            {/* 2. Nest the user routes just like we did for organizations */}
             <Route path="users">
               <Route index element={<AdminUserList />} />
               <Route path="new" element={<AdminUserCreate />} />
@@ -83,9 +74,7 @@ function App() {
           </Route>
         </Route>
 
-        {/* Catch-all redirect */}
         <Route path="*" element={<NotFound />} />
-        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
       </Routes>
     </Router>
   );
