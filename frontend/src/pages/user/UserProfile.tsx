@@ -8,6 +8,7 @@ const UserProfile = () => {
   const { t } = useTranslation();
   const [profile, setProfile] = useState<PlatformUser | null>(null);
 
+  // State for the user's lifetime impact
   const [impactAmount, setImpactAmount] = useState<number>(0);
 
   const [formData, setFormData] = useState({ firstName: '', lastName: '' });
@@ -24,12 +25,18 @@ const UserProfile = () => {
         // Run both requests in parallel for better performance
         const [profileResponse, impactResponse] = await Promise.all([
           apiClient.get<PlatformUser>('/users/me'),
-          // Fallback to { data: 0 } in case the user has no donations and backend throws an error
-          apiClient.get<number>('/donations/my-impact').catch(() => ({ data: 0 })),
+          // Expect the JSON object and fallback to 0 if the user has no donations
+          apiClient
+            .get<{
+              totalDonatedAmount: number;
+              totalDonationsCount: number;
+            }>('/donations/my-impact')
+            .catch(() => ({ data: { totalDonatedAmount: 0, totalDonationsCount: 0 } })),
         ]);
 
         setProfile(profileResponse.data);
-        setImpactAmount(impactResponse.data);
+        // Extract just the totalDonatedAmount from the JSON response
+        setImpactAmount(impactResponse.data.totalDonatedAmount);
 
         setFormData({
           firstName: profileResponse.data.firstName,
