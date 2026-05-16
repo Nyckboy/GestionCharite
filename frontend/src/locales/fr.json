@@ -310,7 +310,8 @@
     "unsavedChanges": "Les modifications non enregistrées seront perdues.",
     "btnDiscard": "Abandonner",
     "btnSaving": "Enregistrement...",
-    "btnSave": "Enregistrer les modifications"
+    "btnSave": "Enregistrer les modifications",
+    "noImpact": "0 MAD"
   },
   "login": {
     "welcomeBack": "Bon retour parmi nous",

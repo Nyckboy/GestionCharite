@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // <-- Added
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../api/axios';
 import type { PlatformUser } from '../../types';
 import { getErrorMessage } from '../../utils/errorHandler';
 
 const UserProfile = () => {
-  const { t } = useTranslation(); // <-- Added
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<PlatformUser | null>(null);
+
+  const [impactAmount, setImpactAmount] = useState<number>(0);
 
   const [formData, setFormData] = useState({ firstName: '', lastName: '' });
   const [isLoading, setIsLoading] = useState(true);
@@ -17,13 +19,21 @@ const UserProfile = () => {
   } | null>(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileData = async () => {
       try {
-        const response = await apiClient.get<PlatformUser>('/users/me');
-        setProfile(response.data);
+        // Run both requests in parallel for better performance
+        const [profileResponse, impactResponse] = await Promise.all([
+          apiClient.get<PlatformUser>('/users/me'),
+          // Fallback to { data: 0 } in case the user has no donations and backend throws an error
+          apiClient.get<number>('/donations/my-impact').catch(() => ({ data: 0 })),
+        ]);
+
+        setProfile(profileResponse.data);
+        setImpactAmount(impactResponse.data);
+
         setFormData({
-          firstName: response.data.firstName,
-          lastName: response.data.lastName,
+          firstName: profileResponse.data.firstName,
+          lastName: profileResponse.data.lastName,
         });
       } catch (error) {
         setStatusMessage({ type: 'error', text: t('userProfile.errLoad') + error });
@@ -31,7 +41,7 @@ const UserProfile = () => {
         setIsLoading(false);
       }
     };
-    fetchProfile();
+    fetchProfileData();
   }, [t]);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -67,7 +77,7 @@ const UserProfile = () => {
 
   return (
     <form onSubmit={handleSave} className="space-y-8 font-['Inter',sans-serif]">
-      <section className="flex flex-col items-center gap-8 rounded-2xl border border-[#dee3e8] bg-white bg-gradient-to-br from-white to-[#eff4f9] p-8 shadow-[0px_4px_6px_rgba(26,54,93,0.04)] md:flex-row">
+      <section className="flex flex-col items-center gap-8 rounded-2xl border border-[#dee3e8] bg-white bg-linear-to-br from-white to-[#eff4f9] p-8 shadow-[0px_4px_6px_rgba(26,54,93,0.04)] md:flex-row">
         <div className="relative">
           <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-[#002045] text-5xl font-bold text-white shadow-md">
             {profile.firstName.charAt(0)}
@@ -97,12 +107,16 @@ const UserProfile = () => {
           </div>
         </div>
 
-        <div className="flex min-w-[240px] flex-col items-center justify-center rounded-2xl border border-[#d6e3ff] bg-[#f5faff] p-6 opacity-60">
-          <div className="mb-4 text-center">
+        <div className="flex min-w-60 flex-col items-center justify-center rounded-2xl border border-[#d6e3ff] bg-[#f5faff] p-6">
+          <div className="text-center">
             <p className="text-xs font-bold tracking-widest text-[#74777f] uppercase">
               {t('userProfile.lifetimeImpact')}
             </p>
-            <p className="mt-1 text-3xl font-bold text-[#002045]">{t('userProfile.pending')}</p>
+            <p className="mt-1 text-3xl font-bold text-[#002045]">
+              {impactAmount > 0
+                ? `${impactAmount.toLocaleString()} MAD`
+                : t('userProfile.noImpact')}
+            </p>
           </div>
         </div>
       </section>

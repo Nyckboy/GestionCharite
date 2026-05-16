@@ -310,7 +310,8 @@
     "unsavedChanges": "Unsaved changes will be lost.",
     "btnDiscard": "Discard",
     "btnSaving": "Saving...",
-    "btnSave": "Save Changes"
+    "btnSave": "Save Changes",
+    "noImpact": "0 MAD"
   },
   "login": {
     "welcomeBack": "Welcome back",
@@ -501,5 +502,8 @@
     "successSubtitle": "Thank you for your generous donation. Your transaction has been securely processed and your impact is being recorded.",
     "backToFeed": "Return to Campaigns",
     "unexpectedError": "An unexpected error occurred."
+  },
+  "userProfile": {
+    
   }
 }
