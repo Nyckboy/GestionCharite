@@ -3,7 +3,6 @@ package com.project.GestionCharite.services;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.GestionCharite.dto.PageResponse;
-import com.project.GestionCharite.dto.CharityDTOs.ActionResponse;
 import com.project.GestionCharite.dto.DonationDTOs.DonationRequest;
 import com.project.GestionCharite.dto.DonationDTOs.DonationResponse;
+import com.project.GestionCharite.dto.DonationDTOs.ImpactResponse;
 import com.project.GestionCharite.dto.DonationDTOs.PaymentIntentResponse;
 import com.project.GestionCharite.models.CharityAction;
 import com.project.GestionCharite.models.Donation;
@@ -185,6 +184,28 @@ public class DonationService {
                 .donationDate(donation.getDonationDate()) 
                 .actionid(donation.getAction().getId())
                 .message("Thank you for your generous donation!")
+                .build();
+    }
+
+    // 🔒 SECURE: Get user's lifetime impact statistics
+    public ImpactResponse getMyLifetimeImpact(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Ask the database to do the heavy lifting
+        BigDecimal totalAmount = donationRepository.sumCompletedDonationsByDonorId(
+                user.getId(), 
+                DonationStatus.COMPLETED
+        );
+        
+        long totalCount = donationRepository.countCompletedDonationsByDonorId(
+                user.getId(), 
+                DonationStatus.COMPLETED
+        );
+
+        return ImpactResponse.builder()
+                .totalDonatedAmount(totalAmount)
+                .totalDonationsCount(totalCount)
                 .build();
     }
 }

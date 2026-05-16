@@ -44,4 +44,13 @@ public class DonationDTOs {
         private String clientSecret; // The magic string React needs to load the card fields
         private Long donationId;
     }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ImpactResponse {
+        private BigDecimal totalDonatedAmount;
+        private long totalDonationsCount;
+    }
 }

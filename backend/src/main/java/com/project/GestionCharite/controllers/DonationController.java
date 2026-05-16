@@ -3,6 +3,7 @@ package com.project.GestionCharite.controllers;
 import com.project.GestionCharite.dto.PageResponse;
 import com.project.GestionCharite.dto.DonationDTOs.DonationRequest;
 import com.project.GestionCharite.dto.DonationDTOs.DonationResponse;
+import com.project.GestionCharite.dto.DonationDTOs.ImpactResponse;
 import com.project.GestionCharite.dto.DonationDTOs.PaymentIntentResponse;
 import com.project.GestionCharite.services.DonationService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/donations")
@@ -64,5 +64,14 @@ public class DonationController {
         
         String donorEmail = authentication.getName();
         return ResponseEntity.ok(donationService.createPaymentIntent(request, donorEmail));
+    }
+
+    // 🔒 SECURE: Get lifetime impact for the logged-in donor
+    @GetMapping("/my-impact")
+    public ResponseEntity<ImpactResponse> getMyLifetimeImpact(Authentication authentication) {
+        // Extract the email securely from the JWT token
+        String email = authentication.getName(); 
+        
+        return ResponseEntity.ok(donationService.getMyLifetimeImpact(email));
     }
 }
