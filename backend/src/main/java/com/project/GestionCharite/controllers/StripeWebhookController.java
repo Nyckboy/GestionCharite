@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.stripe.exception.EventDataObjectDeserializationException;
 
 @RestController
 @RequestMapping("/api/v1/webhooks")
@@ -51,8 +52,23 @@ public class StripeWebhookController {
         if ("payment_intent.succeeded".equals(event.getType())) {
             EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
             
-            if (dataObjectDeserializer.getObject().isPresent()) {
-                PaymentIntent paymentIntent = (PaymentIntent) dataObjectDeserializer.getObject().get();
+            PaymentIntent paymentIntent = null;
+            
+            try {
+                // Try safe deserialization first
+                if (dataObjectDeserializer.getObject().isPresent()) {
+                    paymentIntent = (PaymentIntent) dataObjectDeserializer.getObject().get();
+                } else {
+                    // 🛠️ Force deserialization if versions don't match
+                    System.out.println("⚠️ 2.5 API Version mismatch detected. Forcing deserialization...");
+                    paymentIntent = (PaymentIntent) dataObjectDeserializer.deserializeUnsafe();
+                }
+            } catch (EventDataObjectDeserializationException e) {
+                // 🛡️ JAVA REQUIRES THIS CATCH BLOCK!
+                System.out.println("❌ 2.5 DESERIALIZATION FAILED: " + e.getMessage());
+            }
+
+            if (paymentIntent != null) {
                 System.out.println("💰 3. PROCESSING PAYMENT: " + paymentIntent.getId());
                 
                 try {
@@ -60,7 +76,6 @@ public class StripeWebhookController {
                     donationService.fulfillDonation(paymentIntent.getId());
                     System.out.println("🎉 4. DATABASE UPDATED SUCCESSFULLY!");
                 } catch (Exception e) {
-                    // IF IT FAILS HERE, it couldn't find the transaction ID in the database
                     System.out.println("❌ 4. DATABASE ERROR: " + e.getMessage());
                 }
             }
