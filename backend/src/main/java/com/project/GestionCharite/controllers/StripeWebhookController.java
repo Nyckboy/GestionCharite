@@ -26,6 +26,7 @@ public class StripeWebhookController {
     public ResponseEntity<String> handleStripeWebhook(
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String sigHeader) {
+        System.out.println("🚨 WEBHOOK RECEIVED! Signature: " + sigHeader);
 
         Event event = null;
 

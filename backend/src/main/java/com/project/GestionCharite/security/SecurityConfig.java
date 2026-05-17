@@ -39,6 +39,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
                 .requestMatchers("/api/v1/auth/**").permitAll() // Login and Registration
+                .requestMatchers("/api/v1/webhooks/**").permitAll()
                 .requestMatchers("/", "/index").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/actions/**").permitAll() // Anyone can view charity actions
