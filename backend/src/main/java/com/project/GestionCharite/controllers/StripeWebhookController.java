@@ -26,28 +26,49 @@ public class StripeWebhookController {
     public ResponseEntity<String> handleStripeWebhook(
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String sigHeader) {
-        System.out.println("🚨 WEBHOOK RECEIVED! Signature: " + sigHeader);
 
+        System.out.println("=============================================");
+        System.out.println("🚨 1. WEBHOOK RECEIVED! Signature: " + sigHeader);
+        
         Event event = null;
 
         try {
-            // Verify the payload is actually from Stripe using your webhook secret
+            // 2. Try to verify the signature
             event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+            System.out.println("✅ 2. SIGNATURE VERIFIED! Event Type: " + event.getType());
+            
         } catch (SignatureVerificationException e) {
+            // IF IT FAILS HERE, your application.yml secret is wrong
+            System.out.println("❌ 2. SIGNATURE MISMATCH!");
+            System.out.println("My YML Secret is: " + endpointSecret);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid signature");
+        } catch (Exception e) {
+            System.out.println("❌ 2. UNKNOWN ERROR: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error");
         }
 
-        // Handle the event
+        // 3. Check the event type
         if ("payment_intent.succeeded".equals(event.getType())) {
             EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+            
             if (dataObjectDeserializer.getObject().isPresent()) {
                 PaymentIntent paymentIntent = (PaymentIntent) dataObjectDeserializer.getObject().get();
+                System.out.println("💰 3. PROCESSING PAYMENT: " + paymentIntent.getId());
                 
-                // Trigger the fulfillment logic in your service!
-                donationService.fulfillDonation(paymentIntent.getId());
+                try {
+                    // Trigger the fulfillment logic in your service
+                    donationService.fulfillDonation(paymentIntent.getId());
+                    System.out.println("🎉 4. DATABASE UPDATED SUCCESSFULLY!");
+                } catch (Exception e) {
+                    // IF IT FAILS HERE, it couldn't find the transaction ID in the database
+                    System.out.println("❌ 4. DATABASE ERROR: " + e.getMessage());
+                }
             }
+        } else {
+            System.out.println("⚠️ 3. IGNORED EVENT TYPE: " + event.getType());
         }
 
+        System.out.println("=============================================");
         return ResponseEntity.ok("Webhook received");
     }
 }
