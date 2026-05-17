@@ -23,6 +23,10 @@ public interface DonationRepository extends JpaRepository<Donation, Long>{
     List<Donation> findByActionId(Long actionId);
     Page<Donation> findByActionId(Long actionId, Pageable pageable);
 
+    Page<Donation> findByDonorIdAndStatus(Long donorId, DonationStatus status, Pageable pageable);
+    
+    Page<Donation> findByActionIdAndStatus(Long actionId, DonationStatus status, Pageable pageable);
+
     // for Paypal/Strip
     Optional<Donation> findByTransactionId(String transactionId);
     List<Donation> findByStatus(DonationStatus status);

@@ -140,7 +140,11 @@ public class DonationService {
 
     public PageResponse<DonationResponse> getDonationsForAction(Long actionId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Donation> donationPage = donationRepository.findByActionId(actionId, pageable);
+        Page<Donation> donationPage = donationRepository.findByActionIdAndStatus(
+                actionId, 
+                DonationStatus.COMPLETED, 
+                pageable
+        );
         List<DonationResponse> content = donationPage.getContent().stream()
                                             .map(this::mapToResponse)
                                             .toList();
@@ -159,7 +163,11 @@ public class DonationService {
         Pageable pageable = PageRequest.of(page, size);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Page<Donation> donationPage = donationRepository.findByDonorId(user.getId(), pageable);
+        Page<Donation> donationPage = donationRepository.findByActionIdAndStatus(
+                user.getId(), 
+                DonationStatus.COMPLETED, 
+                pageable
+        );
         List<DonationResponse> content = donationPage.getContent().stream()
                                             .map(this::mapToResponse)
                                             .toList();
