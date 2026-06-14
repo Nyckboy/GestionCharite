@@ -6,12 +6,14 @@ WORKDIR /app
 
 # Copy the pom.xml and download dependencies first (caches them for faster future builds)
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Mount the Maven cache so dependencies are saved between builds
+RUN --mount=type=cache,target=/root/.m2 mvn dependency:go-offline -B
 
 # Copy the actual source code and build it
 COPY src ./src
 # We skip tests here because we will configure Jenkins to run tests before building!
-RUN mvn clean package -DskipTests
+# Mount the cache again for the build phase
+RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests
 
 # ==========================================
 # Stage 2: Run the Application

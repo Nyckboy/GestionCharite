@@ -10,18 +10,26 @@
         <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
             <h2 class="mb-6 text-2xl font-bold text-center text-gray-800">Join Gestion Charité</h2>
             
+            <!-- th:if: Checks if an 'error' message was sent from the server. 
+                 Only displays this red box if 'error' is NOT null. -->
             <div th:if="${error != null}" class="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded">
+                <!-- th:text: Replaces the text inside this span with the actual error message from the server. -->
                 <span th:text="${error}"></span>
             </div>
 
+            <!-- th:action: Safely creates the URL to send the form data to (/register). 
+                 th:object: Connects this entire form to the 'registerRequest' Java object on your server. -->
             <form th:action="@{/register}" th:object="${registerRequest}" method="POST" class="space-y-4">
                 
                 <div class="flex gap-4">
                     <div class="w-1/2">
                         <label class="block mb-1 text-sm font-semibold text-gray-700">First Name</label>
+                        <!-- th:field: Connects this specific input to the 'firstName' variable inside the 'registerRequest' object.
+                             th:classappend: Adds the red border classes IF there's a validation error for 'firstName', otherwise adds standard blue classes. -->
                         <input type="text" th:field="*{firstName}" 
                                th:classappend="${#fields.hasErrors('firstName')} ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'"
                                class="w-full p-2 border rounded focus:ring-2 outline-none" />
+                        <!-- th:if & th:errors: If the 'firstName' input was invalid (e.g., too short), this paragraph shows the specific validation error message. -->
                         <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="mt-1 text-xs text-red-600"></p>
                     </div>
                     <div class="w-1/2">
@@ -51,6 +59,7 @@
 
                 <div>
                     <label class="block mb-1 text-sm font-semibold text-gray-700">I want to...</label>
+                    <!-- th:field here will automatically select the right option if the form is reloaded -->
                     <select th:field="*{role}" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 bg-white outline-none">
                         <option value="USER">Donate to campaigns (User)</option>
                         <option value="ORG_ADMIN">Register an Organization (Org Admin)</option>
@@ -63,6 +72,7 @@
             </form>
 
             <p class="mt-4 text-sm text-center text-gray-600">
+                <!-- th:href: Safely generates a relative link to the /login page, ensuring it works in any environment -->
                 Already have an account? <a th:href="@{/login}" class="text-blue-600 hover:underline">Log in here</a>
             </p>
         </div>
